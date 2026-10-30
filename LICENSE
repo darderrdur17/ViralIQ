@@ -14,8 +14,12 @@ This project analyses a dataset it does not own and does not redistribute:
   datasocial/tiktok-5.6B-videos  —  https://huggingface.co/datasets/datasocial/tiktok-5.6B-videos
 
 That dataset is licensed CC BY-NC 4.0 (Attribution-NonCommercial 4.0 International), which
-prohibits commercial use. Nothing here grants rights to it, and no dataset rows are committed to
-this repository.
+prohibits commercial use. Nothing here grants rights to it.
+
+The repository does contain one derived file, `data/fixtures/demo_sample.parquet` — 20,000 rows
+sampled from the source, included only so a fresh clone can be demonstrated without downloading the
+full corpus. It remains subject to CC BY-NC 4.0: non-commercial use only, attribution required. No
+other dataset rows are committed, and no full partition is redistributed here.
 
 Third-party Python dependencies remain under their own licences.
 

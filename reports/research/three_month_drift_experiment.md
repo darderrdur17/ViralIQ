@@ -82,9 +82,13 @@ training can reach.
 2. **`--months` exists** so the split can be scoped deliberately rather than inheriting whichever
    partitions happen to be on disk.
 
-3. **A label-quality guard** now records `label_quality` in every run and logs a warning when more
-   than 25% of the training split is dropped on the observation clock. Training on a biased
-   subsample is still possible — the demo fixture legitimately does it — but it is no longer silent.
+3. **Training now refuses** when more than 25% of the training split falls past the observation-age
+   window. `run_training` raises `DegradedLabelError`, `scripts/train.py` exits with code 2, and the
+   message names both remedies (`--months` to scope, `--allow-degraded` to override). The check is
+   keyed on *rows past the window* specifically, not on all invalid rows: a negative observation age
+   is a stale crawl batch spread across the month, whereas rows past the window are the biased
+   subsample that drags the threshold. Without that distinction the guard would also block the demo
+   fixture, whose October rows are 35% negative-age but 0% past the window.
 
 4. **The `recent` split stays in the protocol** and remains unpopulated in the shipped run. That is
    an honest gap, not an oversight: the code supports it, the data does not.

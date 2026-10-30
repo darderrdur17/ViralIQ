@@ -107,6 +107,13 @@ def fit_cohort_thresholds(
     """
     cfg = cfg or SETTINGS.labels
     eligible = train_df.filter(pl.col("observation_valid"))
+    if eligible.height == 0:
+        # Without this the quantile below returns None and fails as a confusing
+        # TypeError deep inside polars, which says nothing about the real cause.
+        raise ValueError(
+            "no rows have a valid observation clock; thresholds cannot be fitted. "
+            "Check the observation-age window against this partition's crawl timestamps."
+        )
     key = _cohort_key_expr(cfg.cohort_keys)
     eligible = eligible.with_columns(key.alias("_cohort"))
 
@@ -193,11 +200,28 @@ def label_diagnostics(df: pl.DataFrame) -> dict:
         return {"rows": 0}
     valid = df.filter(pl.col("observation_valid"))
     positives = int(valid["viral_at_snapshot"].sum() or 0)
+
+    # Two different defects hide inside "invalid clock", and they matter differently:
+    # a negative age is a stale crawl batch spread across the month, whereas rows past
+    # the age window are a *biased subsample* of the month's reach distribution, which
+    # drags the fitted threshold with them. Report them separately.
+    cfg = SETTINGS.labels
+    pct_negative = round(
+        100.0 * float((df["observation_age_hours"] < 0).sum()) / max(n, 1), 3
+    )
+    pct_over_window = round(
+        100.0
+        * float((df["observation_age_hours"] > cfg.max_observation_age_hours).sum())
+        / max(n, 1),
+        3,
+    )
     return {
         "rows": n,
         "rows_observation_valid": valid.height,
         "rows_excluded_invalid_clock": n - valid.height,
         "pct_excluded_invalid_clock": round(100 * (n - valid.height) / n, 3),
+        "pct_negative_observation_age": pct_negative,
+        "pct_over_age_window": pct_over_window,
         "positives": positives,
         "prevalence_valid": round(positives / valid.height, 6) if valid.height else None,
         "prevalence_all_rows": round(positives / n, 6),

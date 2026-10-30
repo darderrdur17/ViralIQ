@@ -42,6 +42,10 @@ log = get_logger("train")
 VERSION = "1.0.0"
 
 
+class DegradedLabelError(RuntimeError):
+    """Raised when the training month cannot support a trustworthy label."""
+
+
 # --------------------------------------------------------------------------- #
 # Data preparation
 # --------------------------------------------------------------------------- #
@@ -292,6 +296,7 @@ def run_training(
     seed: int | None = None,
     max_rows_per_split: int | None = None,
     file_row_cap: int | None = 400_000,
+    allow_degraded: bool = False,
 ) -> TrainingRun:
     started = time.time()
     seed = seed if seed is not None else SETTINGS.model.random_state
@@ -332,25 +337,40 @@ def run_training(
     # This happened with 2026-08 (median observation age 756h against a 720h window):
     # 53% of rows dropped and the global threshold collapsed from 258,801 to 58,526,
     # inflating test prevalence to 4.3%. Warn loudly rather than train quietly on it.
-    excluded_pct = float(diag.get("train", {}).get("pct_excluded_invalid_clock") or 0.0)
+    # Guard on rows past the age window specifically. A negative observation age is a
+    # stale crawl batch spread across the month; rows past the window are a *biased
+    # subsample* of the month's reach distribution, and they drag the fitted threshold
+    # with them. Only the second is disqualifying. Measured on 2026-08: 53.0% past the
+    # window, p99 collapsing 258,801 -> 58,526, and CatBoost ending up below random.
+    train_diag = diag.get("train", {})
+    over_window = float(train_diag.get("pct_over_age_window") or 0.0)
+    excluded_pct = float(train_diag.get("pct_excluded_invalid_clock") or 0.0)
+    degraded = over_window > 25.0
     label_quality = {
         "pct_excluded_invalid_clock": excluded_pct,
-        "degraded": excluded_pct > 25.0,
+        "pct_over_age_window": over_window,
+        "pct_negative_observation_age": float(
+            train_diag.get("pct_negative_observation_age") or 0.0
+        ),
+        "degraded": degraded,
         "threshold_pct": 25.0,
         "reason": (
-            "Training split loses more than a quarter of its rows to the observation "
-            "clock, so the survivors are a biased subsample and the fitted threshold "
-            "may not transfer to later months."
-            if excluded_pct > 25.0
+            f"{over_window:.1f}% of the training split was observed more than "
+            f"{SETTINGS.labels.max_observation_age_hours:.0f}h after publication, so the "
+            "surviving rows are a biased subsample of that month's reach distribution and "
+            "the fitted threshold will not transfer."
+            if degraded
             else "Training split is within the observation-clock validity window."
         ),
     }
-    if label_quality["degraded"]:
-        log.warning(
-            "LABEL QUALITY: %.1f%% of the training split was dropped on the observation "
-            "clock. Treat the fitted threshold and the resulting metrics as unreliable.",
-            excluded_pct,
+    if degraded and not allow_degraded:
+        raise DegradedLabelError(
+            f"Refusing to train: {label_quality['reason']} "
+            "Pass --allow-degraded to override, or scope the split with --months to "
+            "partitions whose observation ages fall inside the window."
         )
+    if degraded:
+        log.warning("LABEL QUALITY DEGRADED (overridden): %s", label_quality["reason"])
 
     # Features — sound stats frozen on the training window only.
     sound_stats = fit_sound_stats(train)

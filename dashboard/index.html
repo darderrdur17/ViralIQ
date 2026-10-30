@@ -127,6 +127,11 @@
   th{white-space:nowrap}
   td.num{white-space:nowrap}
 
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--accent);color:#04070b;
+    padding:8px 14px;border-radius:0 0 8px 0;font-weight:700;z-index:100;text-decoration:none}
+  .skip-link:focus{left:0}
+  main:focus{outline:none}
+
   .hide{display:none}
   .prob{font-size:38px;font-weight:700;letter-spacing:-1.2px;font-variant-numeric:tabular-nums}
   .skel{background:linear-gradient(90deg,#141b24,#1c2634,#141b24);
@@ -135,6 +140,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="wrap">
   <header>
     <div class="brand">
@@ -157,6 +163,7 @@
     <button data-tab="data" role="tab" aria-selected="false" aria-controls="tab-data">Data Operations</button>
   </nav>
 
+  <main id="main">
   <!-- OVERVIEW -->
   <section id="tab-overview" role="tabpanel" aria-label="overview">
     <div class="grid g4" id="kpis" style="margin-bottom:14px"></div>
@@ -207,7 +214,7 @@
           <div class="big">No prediction yet</div>
           Submit the form to score this video against the active model.
         </div>
-        <div id="resultBody" class="hide"></div>
+        <div id="resultBody" class="hide" aria-live="polite"></div>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
@@ -248,6 +255,7 @@
     </div>
     <div class="card"><h3>Source &amp; ingestion</h3><div id="source"></div></div>
   </section>
+  </main>
 </div>
 
 <script>
@@ -260,6 +268,16 @@ const $ = (id) => document.getElementById(id);
 function wrapTables(){
   document.querySelectorAll('table:not(.wrapped)').forEach(t => {
     t.classList.add('wrapped');
+    // Tables are rendered as bare markup, so give each one a name and proper
+    // header scope rather than leaving screen readers to infer structure.
+    if (!t.getAttribute('aria-label')) {
+      const card = t.closest('.card');
+      const heading = card && card.querySelector('h3');
+      if (heading) t.setAttribute('aria-label', heading.textContent.trim());
+    }
+    t.querySelectorAll('thead th').forEach(th => {
+      if (!th.hasAttribute('scope')) th.setAttribute('scope', 'col');
+    });
     if (t.parentElement && t.parentElement.classList.contains('table-wrap')) return;
     const w = document.createElement('div');
     w.className = 'table-wrap';
@@ -423,9 +441,14 @@ async function loadOverview(){
           </tr>`).join('')}</tbody></table>`;
 
       const maxH = Math.max(...c.hour_utc.map(h => h.median_views), 1);
+      // A bar chart is meaningless to a screen reader, so summarise it in words.
+      const peak = c.hour_utc.reduce((a, b) => (b.median_views > a.median_views ? b : a));
+      const chartAlt = `Median views by publication hour, UTC. Peak at ${peak.hour}:00 with `
+        + `${fmt(peak.median_views)} median views across ${fmt(peak.videos)} videos.`
+        + ` Full data in the table above.`;
       // Pixel heights rather than percentages: a percentage height inside a flex
       // item without an explicit height resolves to zero.
-      $('hours').innerHTML = `<div style="display:flex;align-items:flex-end;gap:4px;margin-top:8px">
+      $('hours').innerHTML = `<div role="img" aria-label="${esc(chartAlt)}" style="display:flex;align-items:flex-end;gap:4px;margin-top:8px">
         ${c.hour_utc.map(h => {
           const px = Math.max(2, Math.round(h.median_views / maxH * 110));
           return `<div style="flex:1;text-align:center" title="${h.hour}:00 UTC — median ${fmt(h.median_views)} views">

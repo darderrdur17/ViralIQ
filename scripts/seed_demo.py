@@ -108,7 +108,7 @@ def main() -> int:
     print("This is a 20k-row slice. For the real evaluation, build a full sample:")
     print("  python scripts/build_sample.py --months 2026-08 2026-09 --fraction 0.01")
     print("  python scripts/build_sample.py --months 2026-10 --fraction 1.0 --name r")
-    print("  python scripts/train.py --max-rows 300000")
+    print("  python scripts/train.py --months 2026-09 2026-10 --max-rows 300000")
     return 0
 
 

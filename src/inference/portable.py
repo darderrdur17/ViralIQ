@@ -167,6 +167,15 @@ def export_portable_spec(model, encoder, reference: dict, thresholds: dict,
     prep = est.named_steps["prep"]
     clf = est.named_steps["clf"]
 
+    # The surrogate is affine by construction: it assumes a linear decision function.
+    # A forest or booster has no coefficient vector, and approximating one silently
+    # would make the deployed predictions disagree with the evaluated model.
+    if not hasattr(clf, "coef_"):
+        raise TypeError(
+            f"portable export requires a linear champion, got {type(clf).__name__}. "
+            "Retrain so a linear model wins, or extend the surrogate before deploying."
+        )
+
     # Recover the Platt parameters from the fitted calibrator.
     calibrated = getattr(model, "calibrated_classifiers_", None)
     if not calibrated:

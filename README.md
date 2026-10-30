@@ -305,7 +305,7 @@ python3 scripts/build_sample.py --months 2026-09 --fraction 0.01 --name s
 python3 scripts/build_sample.py --months 2026-10 --fraction 1.0  --name r
 
 # 3. Train, calibrate, benchmark, and generate reports
-python3 scripts/train.py --max-rows 300000
+python3 scripts/train.py --months 2026-09 2026-10 --max-rows 300000
 #    → reports/evaluation/model_benchmark.md
 #    → reports/executive/executive_summary.md
 #    → docs/model_card.md
@@ -522,7 +522,11 @@ dataset's terms.
 Data: the underlying dataset is **CC BY-NC 4.0** — **non-commercial only**. Commercial deployment
 requires a separate licence from the dataset publisher.
 
-No dataset rows are committed. `data/`, `models/` and the application database are gitignored.
+**One data file is committed**: `data/fixtures/demo_sample.parquet`, 20,000 rows (2.1 MB) used
+solely so a fresh clone can demo without a download. It is a derived sample of the CC BY-NC 4.0
+source and inherits those terms; provenance is in
+[`data/fixtures/README.md`](data/fixtures/README.md). Everything else — full samples, model
+artefacts and the application database — is gitignored.
 
 <div align="center">
 <sub>Built with DuckDB, Polars, scikit-learn, CatBoost, LightGBM, SHAP and FastAPI.</sub>

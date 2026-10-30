@@ -32,10 +32,18 @@ jobs:
       - name: Lint
         run: ruff check src api scripts tests deploy/vercel/api
 
+      - name: Seed demo data and model
+        # Without this, 9 tests skip on a clean checkout: four API tests and all five
+        # portable-parity tests. Those parity tests are the only guarantee that the
+        # serverless surrogate matches the real model, so skipping them meant CI would
+        # stay green while the deployed predictions drifted. Seeding also exercises
+        # scripts/seed_demo.py, which is otherwise untested.
+        run: python scripts/seed_demo.py
+
       - name: Tests
-        # Model artefacts are not committed, so tests that need a trained model
-        # skip themselves. Everything else must pass.
-        run: pytest tests/ -q
+        # Model artefacts are not committed; the seed step above creates one so the
+        # inference and parity tests actually run.
+        run: pytest tests/ -q -rs
 
       - name: Serverless mirror is in sync with src/
         # Fails if src/ changed without re-running scripts/export_portable.py,

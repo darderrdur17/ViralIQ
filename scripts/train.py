@@ -33,6 +33,12 @@ def main() -> int:
              "e.g. --months 2026-09 2026-10",
     )
     parser.add_argument(
+        "--allow-degraded",
+        action="store_true",
+        help="Proceed even if the training month falls outside the observation-age "
+             "window (produces an untrustworthy threshold).",
+    )
+    parser.add_argument(
         "--max-rows",
         type=int,
         default=300_000,
@@ -51,12 +57,19 @@ def main() -> int:
         return 1
     log.info("samples: %s", [p.name for p in samples])
 
-    run = run_training(
-        sample_paths=samples,
-        output_tag=args.tag,
-        seed=args.seed,
-        max_rows_per_split=args.max_rows,
-    )
+    try:
+        run = run_training(
+            sample_paths=samples,
+            output_tag=args.tag,
+            seed=args.seed,
+            max_rows_per_split=args.max_rows,
+            allow_degraded=args.allow_degraded,
+        )
+    except Exception as exc:
+        if type(exc).__name__ == "DegradedLabelError":
+            log.error("%s", exc)
+            return 2
+        raise
     run_path = SETTINGS.paths.model_registry / run.run_id / "run.json"
     reports = write_reports(run_path)
 
