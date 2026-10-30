@@ -366,7 +366,29 @@ react:
 | `2` | degraded — refuse to serve numbers from this model |
 
 `GET /api/v1/data/status` returns the same verdict under `health`, and the Data Operations tab leads
-with it, so a user can see *whether to trust the numbers* without reading a report. `scripts/train.py` defaults to `--max-rows 300000` to bound memory on a
+with it, so a user can see *whether to trust the numbers* without reading a report.
+
+### Promotion is a gate, not a pipeline
+
+Training can run unattended. Promoting a model cannot, because "better on PR-AUC" is a judgement:
+a new month can move the metric more than the model difference does, and the champion can change
+family (a forest cannot be exported to the serverless surrogate).
+
+```bash
+python scripts/refresh.py --candidate-only   # train + measure, active model keeps serving
+```
+
+The candidate appears in the Model Laboratory under **Runs & promotion**, with a **Promote** button
+next to every run that is not already serving. Promoting:
+
+- refuses a run whose label quality is degraded (`409`)
+- warns if the champion is non-linear (the serverless export would refuse to build)
+- warns if sound coverage is poor
+- takes effect on the next request — the predictor reloads when the registry pointer changes
+
+The button is present on the serverless deployment too, disabled, with the reason: promotion writes
+to the model registry on disk, which a serverless function cannot do. A button that silently failed
+would be worse than no button. `scripts/train.py` defaults to `--max-rows 300000` to bound memory on a
 single machine; raise it if you have the RAM.
 
 ---

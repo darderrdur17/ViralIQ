@@ -5,6 +5,7 @@ import json
 
 from fastapi import APIRouter, HTTPException
 
+from api.schemas.prediction import PromoteRequest
 from src.common.config import SETTINGS
 
 router = APIRouter(prefix="/models", tags=["models"])
@@ -28,8 +29,16 @@ def list_models() -> dict:
     runs = []
     for run in registry.get("runs", []):
         run_dir = SETTINGS.paths.model_registry / run["run_id"]
-        summary = {"run_id": run["run_id"], "started_at": run.get("started_at"),
-                   "champion": run.get("champion")}
+        summary = {
+            "run_id": run["run_id"],
+            "started_at": run.get("started_at"),
+            "champion": run.get("champion"),
+            # Runs created before `status` existed fall back to the pointer rather than
+            # showing "unknown" for the model that is actually serving.
+            "status": run.get("status")
+            or ("active" if run["run_id"] == registry.get("active_run") else "archived"),
+            "is_active": run["run_id"] == registry.get("active_run"),
+        }
         run_file = run_dir / "run.json"
         if run_file.exists():
             payload = json.loads(run_file.read_text(encoding="utf-8"))
@@ -50,6 +59,8 @@ def list_models() -> dict:
         "active_run": registry.get("active_run"),
         "active_model": registry.get("active_model"),
         "run_count": len(runs),
+        "can_promote": True,
+        "candidates": registry.get("candidates", []),
         "runs": runs,
     }
 
@@ -190,3 +201,95 @@ def _selection_note(
         f"{champion} wins on PR-AUC. If you act on a fixed-size shortlist, {best['model']} may be "
         "the better operational choice."
     )
+
+
+@router.post("/promote")
+def promote_run(request: PromoteRequest) -> dict:
+    """Make a trained run serve traffic.
+
+    This is the human gate. Training can run unattended, but promoting a model changes
+    what every user sees, and "better on PR-AUC" is a judgement that needs a person —
+    a new month can move the metric more than the model difference does.
+    """
+    registry = _registry()
+    entry = next((r for r in registry.get("runs", []) if r["run_id"] == request.run_id), None)
+    if entry is None:
+        raise HTTPException(status_code=404, detail=f"Run not found: {request.run_id}")
+
+    run_dir = SETTINGS.paths.model_registry / request.run_id
+    run_file = run_dir / "run.json"
+    if not run_file.exists():
+        raise HTTPException(status_code=404, detail=f"Run artefacts missing: {request.run_id}")
+    payload = json.loads(run_file.read_text(encoding="utf-8"))
+
+    quality = payload.get("label_quality") or {}
+    if quality.get("degraded"):
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "degraded_label",
+                "message": (
+                    "This run's training month lost too many rows to the observation-age "
+                    "window; its threshold is not trustworthy."
+                ),
+                "reason": quality.get("reason"),
+            },
+        )
+
+    metrics = payload.get("metrics") or {}
+    eligible = {
+        name: e
+        for name, e in metrics.items()
+        if not name.startswith("E0") and (e.get("test") or {}).get("pr_auc") is not None
+    }
+    if not eligible:
+        raise HTTPException(status_code=422, detail="Run has no eligible model to promote")
+
+    champion = request.model_name or max(
+        eligible, key=lambda n: eligible[n]["test"]["pr_auc"]
+    )
+    if champion not in eligible:
+        raise HTTPException(
+            status_code=422,
+            detail=f"{champion} is not an eligible model in this run: {sorted(eligible)}",
+        )
+    if not (run_dir / f"{champion}.bin").exists():
+        raise HTTPException(status_code=409, detail=f"Model artefact missing: {champion}.bin")
+
+    # The serverless build exports an affine surrogate, so a non-linear champion cannot
+    # be deployed. Warn rather than block: the full service handles it fine.
+    warnings: list[str] = []
+    importance = (payload.get("feature_importance") or {}).get(champion) or []
+    method = importance[0].get("method") if importance else None
+    if method and method != "abs_coefficient":
+        warnings.append(
+            f"{champion} is not a linear model, so the serverless portable export will "
+            "refuse to build until a linear champion is promoted."
+        )
+    coverage = (payload.get("sound_coverage") or {}).get("test") or {}
+    if (coverage.get("pct_unseen_sound") or 0) > 50:
+        warnings.append(
+            f"{coverage['pct_unseen_sound']:.1f}% of this run's evaluation month uses an "
+            "unseen sound, so sound features are largely absent on forward rows."
+        )
+
+    previous = {"run_id": registry.get("active_run"), "model": registry.get("active_model")}
+    registry["active_run"] = request.run_id
+    registry["active_model"] = champion
+    registry.pop("champion_pinned", None)
+    for r in registry.get("runs", []):
+        r["status"] = "active" if r["run_id"] == request.run_id else "archived"
+    if request.run_id in registry.get("candidates", []):
+        registry["candidates"].remove(request.run_id)
+    REGISTRY.write_text(json.dumps(registry, indent=2), encoding="utf-8")
+
+    return {
+        "promoted": {"run_id": request.run_id, "model_name": champion},
+        "previous": previous,
+        "test_pr_auc": eligible[champion]["test"].get("pr_auc"),
+        "warnings": warnings,
+        "note": (
+            "The predictor reloads on the next request. Redeploy the serverless build to "
+            "reflect this change there."
+        ),
+    }

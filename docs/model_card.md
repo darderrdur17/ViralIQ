@@ -1,6 +1,6 @@
 # Model Card
 
-**Version** `E1_logistic_regression@20261030T130835_primary_936c49`
+**Version** `E2_random_forest@20261030T132450_candidate_297080`
 
 ## Intended use
 
@@ -17,26 +17,26 @@ Ranking candidate videos by their probability of landing in the top 1% of observ
 
 - Source: `datasocial/tiktok-5.6B-videos` (CC BY-NC 4.0)
 - Samples: r__2026-10.parquet, s__2026-09.parquet
-- Training rows: 300,000
-- Rows excluded for an invalid observation clock: 5.673%
+- Training rows: 20,000
+- Rows excluded for an invalid observation clock: 5.685%
 
 ## Label
 
 - Definition: top 1% of observed views within `country × type × observation_age_bucket` cohorts
-- Global threshold: 258,801 views
-- Cohort thresholds fitted: 130
-- Prevalence on valid rows: 1.039%
+- Global threshold: 274,023 views
+- Cohort thresholds fitted: 8
+- Prevalence on valid rows: 1.240%
 - Fixed-age labels (`viral_24h`, `viral_7d`): **unavailable by design**
 
 ## Performance
 
 | Metric | Value |
 |---|---|
-| PR-AUC | 0.0318 |
-| ROC-AUC | 0.7419 |
-| Brier | 0.0137 |
-| ECE (10 bins) | 0.0104 |
-| Test rows | 117,039 |
+| PR-AUC | 0.0062 |
+| ROC-AUC | 0.5814 |
+| Brier | 0.0041 |
+| ECE (10 bins) | 0.0046 |
+| Test rows | 11,684 |
 
 ## Ethical and legal considerations
 

@@ -72,3 +72,14 @@ class ImportRequest(BaseModel):
     path: str = Field(..., description="Absolute path to a local .parquet or .csv file")
     source_label: str = Field("manual_import")
     copy_to_raw: bool = True
+
+
+class PromoteRequest(BaseModel):
+    """Promote a trained run to serve traffic."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    run_id: str = Field(..., description="Run to promote, e.g. from GET /models")
+    model_name: str | None = Field(
+        None, description="Override the champion; defaults to the run's best PR-AUC model"
+    )

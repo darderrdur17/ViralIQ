@@ -217,3 +217,36 @@ def test_trends_declares_it_is_detection_not_forecast(client):
 
 def test_post_route_rejects_get(client):
     assert client.get("/api/v1/predictions/prepublish").status_code == 405
+
+
+def test_promote_unknown_run_is_404(client):
+    """Contract test only: promotion mutates the registry, so tests never promote a real
+    run. The end-to-end promote/restore cycle was verified manually against a live server.
+    """
+    r = client.post("/api/v1/models/promote", json={"run_id": "does-not-exist"})
+    assert r.status_code in (404, 503)
+    if r.status_code == 404:
+        assert "Run not found" in str(r.json()["detail"])
+
+
+def test_promote_rejects_unknown_fields(client):
+    r = client.post(
+        "/api/v1/models/promote",
+        json={"run_id": "x", "force": True},
+    )
+    assert r.status_code == 422
+
+
+def test_promote_requires_a_run_id(client):
+    assert client.post("/api/v1/models/promote", json={}).status_code == 422
+
+
+def test_models_endpoint_declares_promotion_capability(client):
+    body = client.get("/api/v1/models")
+    if body.status_code == 503:
+        pytest.skip("no registry in this environment")
+    payload = body.json()
+    assert "can_promote" in payload
+    for run in payload.get("runs", []):
+        assert "is_active" in run and "status" in run
+        assert run["status"] in {"active", "candidate", "archived", "unknown"}

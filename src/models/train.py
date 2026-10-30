@@ -298,6 +298,7 @@ def run_training(
     max_rows_per_split: int | None = None,
     file_row_cap: int | None = 400_000,
     allow_degraded: bool = False,
+    activate: bool = True,
 ) -> TrainingRun:
     started = time.time()
     seed = seed if seed is not None else SETTINGS.model.random_state
@@ -615,10 +616,18 @@ def run_training(
             "champion": champion,
             "duration_seconds": run.duration_seconds,
             "path": str(run_dir),
+            # A candidate is trained and measured but does not serve traffic until a
+            # human promotes it. That is the whole point of the gate: the pipeline can
+            # build a better model unattended, but "better" is a judgement.
+            "status": "active" if activate else "candidate",
         }
     )
-    registry["active_run"] = run_id
-    registry["active_model"] = champion
+    if activate:
+        registry["active_run"] = run_id
+        registry["active_model"] = champion
+    else:
+        registry.setdefault("candidates", []).append(run_id)
+        log.info("run %s stored as a candidate; active model unchanged", run_id)
     registry_path.write_text(json.dumps(registry, indent=2), encoding="utf-8")
 
     log.info("run %s complete in %.1fs; champion=%s", run_id, run.duration_seconds, champion)

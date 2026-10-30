@@ -1,13 +1,45 @@
 {
   "active_run": "20261030T130835_primary_936c49",
   "active_model": "E1_logistic_regression",
-  "run_count": 1,
+  "run_count": 2,
   "runs": [
     {
       "run_id": "20261030T130835_primary_936c49",
       "started_at": "2026-10-30T13:10:26.187491+00:00",
       "champion": "E1_logistic_regression",
       "pr_auc": 0.031754,
+      "splits": {
+        "train": {
+          "rows": 300000,
+          "min_posted_at": "2026-09-01 00:00:00+00:00",
+          "max_posted_at": "2026-09-30 23:59:57+00:00"
+        },
+        "val": {
+          "rows": 200002,
+          "min_posted_at": "2026-10-01 00:00:00+00:00",
+          "max_posted_at": "2026-10-01 14:38:07+00:00"
+        },
+        "test": {
+          "rows": 199998,
+          "min_posted_at": "2026-10-01 14:38:08+00:00",
+          "max_posted_at": "2026-10-03 13:00:00+00:00"
+        },
+        "recent": {
+          "rows": 0,
+          "min_posted_at": null,
+          "max_posted_at": null
+        }
+      },
+      "sample_files": [
+        "r__2026-10.parquet",
+        "s__2026-09.parquet"
+      ]
+    },
+    {
+      "run_id": "20261030T132450_candidate_297080",
+      "started_at": "2026-10-30T13:25:00.412515+00:00",
+      "champion": "E2_random_forest",
+      "pr_auc": 0.023235,
       "splits": {
         "train": {
           "rows": 300000,

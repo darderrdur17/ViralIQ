@@ -241,6 +241,10 @@
       <h3>Model comparison — identical test split</h3>
       <div id="modelTable"></div>
     </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>Runs &amp; promotion</h3>
+      <div id="runs"></div>
+    </div>
     <div class="grid g2">
       <div class="card"><h3>Feature importance</h3><div id="importance"></div></div>
       <div class="card"><h3>Label &amp; split definition</h3><div id="labelDef"></div></div>
@@ -346,7 +350,7 @@ function activateTab(name){
   });
   TABS.forEach(t => $('tab-'+t).classList.toggle('hide', t !== name));
   if (name === 'trends' && !window._trendsLoaded) loadTrends();
-  if (name === 'models' && !window._modelsLoaded) loadModels();
+  if (name === 'models' && !window._modelsLoaded) { loadModels(); loadRuns(); }
   if (name === 'data' && !window._dataLoaded) loadData();
   if (name === 'predict' && !window._historyLoaded) { loadHistory(); window._historyLoaded = true; }
 }
@@ -713,6 +717,66 @@ async function loadModels(){
   } catch(e){
     if (e.status === 503) emptyState(el, 'No model registry', 'Train a model with scripts/train.py.');
     else errorState(el, e);
+  }
+}
+
+async function loadRuns(){
+  const el = $('runs'); loading(el);
+  try {
+    const m = await api('/models');
+    if (!m.runs || !m.runs.length){ emptyState(el, 'No runs', 'Train a model first.'); return; }
+    const can = m.can_promote !== false;
+    const body = m.runs.slice().reverse().map(r => {
+      const pr = r.pr_auc == null ? '—' : r.pr_auc.toFixed(4);
+      const action = r.is_active
+        ? '<span class="tag pos">serving</span>'
+        : can
+          ? `<button class="ghost" data-promote="${esc(r.run_id)}">Promote</button>`
+          : `<button class="ghost" disabled title="${esc(m.promotion_blocked_reason || 'read-only')}">Promote</button>`;
+      return `<tr>
+        <td style="font-size:11px;font-family:var(--mono)">${esc(r.run_id)}</td>
+        <td style="font-size:11.5px">${esc(r.champion || '—')}</td>
+        <td class="num">${pr}</td>
+        <td class="num"><span class="tag">${esc(r.status || '')}</span></td>
+        <td style="text-align:right">${action}</td></tr>`;
+    }).join('');
+    el.innerHTML = `<table><thead><tr><th>Run</th><th>Champion</th><th class="num">PR-AUC</th>
+      <th class="num">Status</th><th></th></tr></thead><tbody>${body}</tbody></table>`
+      + (can ? `<div class="note">Promotion changes what every user sees, so it is a deliberate
+          action rather than an automatic one. A candidate is trained and measured by
+          <code>scripts/refresh.py --candidate-only</code>; nothing serves it until you
+          click Promote.</div>`
+        : `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+          ${esc(m.promotion_blocked_reason || 'Promotion is unavailable in this deployment.')}</div>`);
+    el.querySelectorAll('[data-promote]').forEach(b => {
+      b.onclick = () => promoteRun(b.dataset.promote, b);
+    });
+  } catch (e) { errorState(el, e); }
+}
+
+async function promoteRun(runId, btn){
+  if (!window.confirm(`Promote ${runId}?\n\nThis changes the model that serves every prediction.`)) return;
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Promoting…';
+  try {
+    const r = await api('/models/promote', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({run_id: runId}),
+    });
+    window._modelsLoaded = false;
+    await loadModels(); await loadRuns(); loadHeader();
+    const warn = (r.warnings || []).length
+      ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+           ${r.warnings.map(esc).join('<br>')}</div>` : '';
+    $('runs').insertAdjacentHTML('afterbegin',
+      `<div class="note" style="border-color:var(--good);color:var(--good)">
+         Promoted ${esc(r.promoted.model_name)} from ${esc(r.promoted.run_id)}
+         (PR-AUC ${r.test_pr_auc == null ? '—' : r.test_pr_auc.toFixed(4)}).</div>${warn}`);
+  } catch (e) {
+    btn.disabled = false; btn.textContent = original;
+    const msg = e.status === 409 ? 'Refused: this run\'s label is degraded.' : e.message;
+    $('runs').insertAdjacentHTML('afterbegin',
+      `<div class="note" style="border-color:var(--bad);color:var(--bad)">${esc(msg)}</div>`);
   }
 }
 

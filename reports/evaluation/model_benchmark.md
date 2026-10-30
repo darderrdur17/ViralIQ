@@ -1,17 +1,17 @@
 # Model Benchmark
 
-Run: `20261030T130835_primary_936c49`  
-Trained: 2026-10-30T13:10:26.187491+00:00  
-Wall time: 113.3 s  
+Run: `20261030T132450_candidate_297080`  
+Trained: 2026-10-30T13:25:00.412515+00:00  
+Wall time: 11.2 s  
 Samples: r__2026-10.parquet, s__2026-09.parquet
 
 ## Splits
 
 | Split | Rows | From | To |
 |---|---|---|---|
-| train | 300,000 | 2026-09-01 00:00:00 | 2026-09-30 23:59:57 |
-| val | 200,002 | 2026-10-01 00:00:00 | 2026-10-01 14:38:07 |
-| test | 199,998 | 2026-10-01 14:38:08 | 2026-10-03 13:00:00 |
+| train | 20,000 | 2026-09-01 00:00:00 | 2026-09-30 23:58:48 |
+| val | 20,000 | 2026-10-01 00:00:00 | 2026-10-01 14:38:06 |
+| test | 20,000 | 2026-10-01 14:38:11 | 2026-10-03 12:47:20 |
 | recent | 0 | None | None |
 
 > No separate forward holdout was available for this run (only two months were ingested). The `test` split is still strictly later in time than `train`, so the reported numbers are out-of-time rather than in-sample, but they rest on a single month boundary. Treat drift conclusions as provisional.
@@ -22,57 +22,57 @@ Ranking metrics at K = 1000. Prevalence shown so Precision@K can be read against
 
 | Model | PR-AUC | PR-AUC 95% CI | ROC-AUC | Precision@1000 | Lift@1000 | Brier | ECE |
 |---|---|---|---|---|---|---|---|
-| E1_logistic_regression **(champion)** | 0.0318 | 0.030–0.035 | 0.7419 | 2.50% | 1.79× | 0.0137 | 0.0104 |
-| E3_catboost | 0.0250 | 0.023–0.028 | 0.6858 | 3.70% | 2.65× | 0.0138 | 0.0082 |
-| E4_lightgbm | 0.0241 | 0.022–0.027 | 0.6667 | 3.40% | 2.43× | 0.0138 | 0.0076 |
-| E2_random_forest | 0.0232 | 0.022–0.026 | 0.6550 | 2.70% | 1.93× | 0.0138 | 0.0056 |
-| E0b_sound_popularity | 0.0152 | — | 0.5136 | 2.20% | 1.57× | 0.1381 | 0.8137 |
-| E0_random_ranking | 0.0146 | — | 0.5162 | 1.20% | 0.86× | 0.3335 | 0.4867 |
-| E0c_duration_only | 0.0111 | — | 0.4193 | 0.60% | 0.43× | 0.0140 | 3.1486 |
+| E2_random_forest **(champion)** | 0.0062 | 0.004–0.011 | 0.5814 | 0.70% | 1.70× | 0.0041 | 0.0046 |
+| E4_lightgbm | 0.0053 | 0.004–0.008 | 0.5610 | 0.50% | 1.22× | 0.0041 | 0.0043 |
+| E0b_sound_popularity | 0.0041 | — | 0.4813 | 0.00% | 0.00× | 0.0413 | 0.2334 |
+| E0_random_ranking | 0.0039 | — | 0.4985 | 0.30% | 0.73× | 0.3308 | 0.4935 |
+| E1_logistic_regression | 0.0035 | 0.003–0.005 | 0.4350 | 0.20% | 0.49× | 0.0041 | 0.0039 |
+| E0c_duration_only | 0.0033 | — | 0.3853 | 0.20% | 0.49× | 0.0041 | 3.1269 |
+| E3_catboost | 0.0028 | 0.002–0.004 | 0.3146 | 0.00% | 0.00× | 0.0041 | 0.0044 |
 | E0_majority_prevalence | — | — | — | — | — | — | — |
 
-Test-set prevalence: 1.399%
+Test-set prevalence: 0.411%
 
 ### Reading these numbers
 
-- PR-AUC is **2.27×** the base rate. A random ranker scores 0.0140; the champion scores 0.0318. This is real but modest discrimination — not a strong predictor.
-- Precision@1000 lift is **1.79×** over random selection at the same cutoff.
-- The model over-predicts on average: mean predicted probability 0.01656 against an observed rate of 0.01399 (ratio 1.18×). Probabilities should be read as a ranking signal, not as a literal risk percentage.
+- PR-AUC is **1.52×** the base rate. A random ranker scores 0.0041; the champion scores 0.0062. This is real but modest discrimination — not a strong predictor.
+- Precision@1000 lift is **1.70×** over random selection at the same cutoff.
+- The model over-predicts on average: mean predicted probability 0.00863 against an observed rate of 0.00411 (ratio 2.10×). Probabilities should be read as a ranking signal, not as a literal risk percentage.
 
 ## Calibration (champion, test split)
 
 | Predicted band | Count | Mean predicted | Observed rate |
 |---|---|---|---|
-| 0.00000–0.01262 | 11,704 | 0.01159 | 0.00384 |
-| 0.01262–0.01363 | 11,704 | 0.01316 | 0.00521 |
-| 0.01363–0.01427 | 11,704 | 0.01397 | 0.00479 |
-| 0.01427–0.01473 | 11,704 | 0.01451 | 0.00333 |
-| 0.01473–0.01517 | 11,703 | 0.01494 | 0.00427 |
-| 0.01517–0.01583 | 11,704 | 0.01545 | 0.00470 |
-| 0.01583–0.01699 | 11,704 | 0.01638 | 0.00906 |
-| 0.01699–0.01871 | 11,704 | 0.01780 | 0.02973 |
-| 0.01871–0.02086 | 11,693 | 0.01978 | 0.03823 |
-| 0.02086–0.26301 | 11,715 | 0.02797 | 0.03671 |
+| 0.00639–0.00718 | 1,169 | 0.00695 | 0.00171 |
+| 0.00718–0.00746 | 1,168 | 0.00732 | 0.00428 |
+| 0.00746–0.00769 | 1,157 | 0.00757 | 0.00432 |
+| 0.00769–0.00793 | 1,180 | 0.00781 | 0.00254 |
+| 0.00793–0.00820 | 1,168 | 0.00806 | 0.00685 |
+| 0.00820–0.00849 | 1,168 | 0.00834 | 0.00086 |
+| 0.00849–0.00886 | 1,169 | 0.00866 | 0.00171 |
+| 0.00886–0.00942 | 1,168 | 0.00912 | 0.00257 |
+| 0.00942–0.01048 | 1,168 | 0.00990 | 0.01027 |
+| 0.01048–0.11374 | 1,169 | 0.01251 | 0.00599 |
 
 ## Feature importance (champion)
 
 | Feature | Importance |
 |---|---|
-| country | 0.49880 |
-| language | 0.25499 |
-| type | 0.07488 |
-| sound_train_median_views_log | 0.06186 |
-| sound_train_usage_log | 0.02573 |
-| caption_len | 0.01306 |
-| caption_words | 0.01273 |
-| is_photo_carousel | 0.01009 |
-| log_duration | 0.00852 |
-| is_shop_video | 0.00704 |
-| is_ad | 0.00577 |
-| caption_has_mention | 0.00417 |
-| caption_emoji_count | 0.00347 |
-| has_branded_content | 0.00322 |
-| posted_hour | 0.00293 |
+| sound_train_median_views_log | 0.69890 |
+| duration_s | 0.05495 |
+| log_duration | 0.03886 |
+| caption_len | 0.02420 |
+| language | 0.02322 |
+| caption_words | 0.02289 |
+| posted_hour | 0.02008 |
+| caption_upper_ratio | 0.01953 |
+| country | 0.01844 |
+| posted_dow | 0.01223 |
+| caption_emoji_count | 0.01068 |
+| log_hashtag_count | 0.00963 |
+| sound_train_usage_log | 0.00919 |
+| hashtag_count | 0.00767 |
+| type | 0.00505 |
 
 ## How to read this
 

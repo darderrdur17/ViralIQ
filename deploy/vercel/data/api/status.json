@@ -6,7 +6,7 @@
   "latest_stats_updated_at": "2026-10-03T13:11:38+00:00",
   "publication_delay_days": 27.0,
   "observation_delay_days": 27.0,
-  "last_ingestion_at": "2026-10-30T13:11:00.453578+00:00",
+  "last_ingestion_at": "2026-10-30T13:26:04.660601+00:00",
   "rows_ingested": 2,
   "thresholds_days": {
     "live": 2,
@@ -28,13 +28,13 @@
     "fixed_age_label_supported": false,
     "distinct_stats_timestamps": 602170
   },
-  "checked_at": "2026-10-30T13:17:57.870633+00:00",
+  "checked_at": "2026-10-30T13:27:00.302266+00:00",
   "model": {
     "available": true,
     "run_id": "20261030T130835_primary_936c49",
     "model_name": "E1_logistic_regression",
     "trained_at": "2026-10-30T13:10:26.187491+00:00",
-    "run_count": 1
+    "run_count": 2
   },
   "sample": {
     "available": true,
@@ -108,6 +108,6 @@
   "deployment": {
     "kind": "serverless",
     "note": "Read-only analytics are pre-computed at export time. Prediction runs live through a portable model; there is no persistent store in this deployment.",
-    "exported_at": "2026-10-30T13:17:58.228767+00:00"
+    "exported_at": "2026-10-30T13:27:00.553061+00:00"
   }
 }

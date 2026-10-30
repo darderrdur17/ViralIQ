@@ -96,6 +96,11 @@ def main() -> int:
     parser.add_argument("--fetch", action="store_true", help="Build samples for months not on disk")
     parser.add_argument("--fraction", type=float, default=0.01, help="Sampling fraction for fetched months")
     parser.add_argument("--max-rows", type=int, default=300_000, help="Per-split row cap when training")
+    parser.add_argument(
+        "--candidate-only",
+        action="store_true",
+        help="Train and measure a candidate without promoting it; the active model keeps serving.",
+    )
     args = parser.parse_args()
 
     state = health.model_health()
@@ -152,8 +157,9 @@ def main() -> int:
     log.info("training on %s", selected)
     run = run_training(
         sample_paths=sample_paths,
-        output_tag="refresh",
+        output_tag="candidate" if args.candidate_only else "refresh",
         max_rows_per_split=args.max_rows,
+        activate=not args.candidate_only,
     )
     write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json")
 
@@ -182,6 +188,12 @@ def main() -> int:
         else:
             print(f"  PR-AUC     {new_pr_auc:.4f}  (no previous run to compare)")
     print(f"  sound cov. {coverage.get('pct_unseen_sound', '—')}% of test rows use an unseen sound")
+    if args.candidate_only:
+        print()
+        print("  Stored as a CANDIDATE. The active model still serves traffic.")
+        print("  Promote it from the dashboard (Model Laboratory) or:")
+        print("    curl -X POST localhost:8000/api/v1/models/promote -H 'Content-Type: application/json' \\")
+        print(f"         -d '{{\"run_id\": \"{run.run_id}\"}}'")
     print()
     print("  Next: redeploy the serverless build if you ship one")
     print("        python scripts/export_portable.py && (cd deploy/vercel && vercel --prod)")

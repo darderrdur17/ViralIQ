@@ -427,7 +427,16 @@ def trends(limit: int = Query(15, ge=1, le=50)) -> dict:
 def models() -> dict:
     if not MODELS:
         raise HTTPException(status_code=503, detail="No model registry exported")
-    return MODELS
+    # Promotion writes to the model registry on disk, which a serverless function cannot
+    # do. The UI shows the button disabled with this reason rather than pretending.
+    return {
+        **MODELS,
+        "can_promote": False,
+        "promotion_blocked_reason": (
+            "This deployment is read-only. Promote a run from the full service "
+            "(POST /api/v1/models/promote) or by running scripts/refresh.py locally."
+        ),
+    }
 
 
 @app.get("/api/v1/models/evaluation")
