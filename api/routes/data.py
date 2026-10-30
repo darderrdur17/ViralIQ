@@ -12,7 +12,7 @@ from src.common.config import SETTINGS
 from src.common.logging import get_logger
 from src.ingestion.hf_source import HFDatasetSource
 from src.ingestion.importer import ImportRejected, load_and_normalise, store_sample
-from src.monitoring import freshness
+from src.monitoring import freshness, health
 from src.preprocessing import quality
 
 router = APIRouter(prefix="/data", tags=["data"])
@@ -34,6 +34,13 @@ def data_status(check_source: bool = False) -> dict:
         "available": analytics.is_ready(),
         "files": [p.name for p in sorted(SETTINGS.paths.data_samples.glob("*.parquet"))],
     }
+    # One verdict answering "is this still trustworthy?", assembled from freshness,
+    # label quality and sound coverage rather than any single signal.
+    try:
+        status["health"] = health.model_health()
+    except Exception as exc:  # pragma: no cover - defensive
+        log.warning("health assessment failed: %s", exc)
+        status["health"] = {"verdict": "unknown", "reasons": [str(exc)]}
     return status
 
 

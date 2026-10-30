@@ -100,13 +100,14 @@ a forecast.
 - [Measured results](#measured-results)
 - [How it works](#how-it-works)
 - [Why the label is not "250,000 views"](#why-the-label-is-not-250000-views)
-- [Five things worth knowing](#five-things-worth-knowing)
+- [Six things worth knowing](#six-things-worth-knowing)
 - [Quick start](#quick-start)
 - [API](#api)
 - [Leakage controls](#leakage-controls)
 - [Repository map](#repository-map)
 - [Verification](#verification)
 - [Honest limitations](#honest-limitations)
+- [Keeping it current](#keeping-it-current)
 - [Deployment](#deployment)
 - [Resources](#resources)
 
@@ -322,7 +323,50 @@ Optional analyses:
 python scripts/threshold_sweep.py    # how sensitive is the result to the "top 1%" line?
 ```
 
-No credentials required. `scripts/train.py` defaults to `--max-rows 300000` to bound memory on a
+No credentials required.
+
+---
+
+## Keeping it current
+
+When new partitions land upstream, `scripts/refresh.py` decides what to do instead of leaving it to
+memory. It measures each local month's observation ages, rejects the ones that cannot be labelled
+honestly, and reports what changed.
+
+```bash
+python scripts/refresh.py --dry-run       # plan only: which months are usable, and why
+python scripts/refresh.py --check-source  # also ask the source for the newest partition
+python scripts/refresh.py --fetch         # download months that are published but not local
+python scripts/refresh.py                 # retrain on the usable months, then export
+```
+
+A dry run looks like this:
+
+```
+  month           rows   median age   >window  status
+  2026-08    1,118,592        756h     53.0%  REJECTED
+            53.0% of rows were observed more than 720h after publication;
+            the survivors are a biased subsample
+  2026-09      987,260        288h      0.1%  usable
+  2026-10    1,734,031         14h      0.0%  usable
+
+  Train on: ['2026-09', '2026-10']
+  Skipped:  ['2026-08'] (observation ages too old)
+  Verdict: CURRENT_WITH_CAVEATS
+    - 81.8% of the evaluation month uses a sound unseen in training ...
+```
+
+**For monitoring**, `--check-only` writes nothing and uses exit codes so a cron job or CI step can
+react:
+
+| Exit | Meaning |
+|---:|---|
+| `0` | current |
+| `1` | usable but with caveats (stale data, sound drift) |
+| `2` | degraded — refuse to serve numbers from this model |
+
+`GET /api/v1/data/status` returns the same verdict under `health`, and the Data Operations tab leads
+with it, so a user can see *whether to trust the numbers* without reading a report. `scripts/train.py` defaults to `--max-rows 300000` to bound memory on a
 single machine; raise it if you have the RAM.
 
 ---

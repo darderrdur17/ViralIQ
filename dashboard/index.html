@@ -723,7 +723,25 @@ async function loadData(){
   loading(f); loading(q); loading(s);
   try {
     const d = await api('/data/status');
-    f.innerHTML = `<table><tbody>
+    // The verdict is assembled server-side from freshness, label quality and sound
+    // coverage. Lead with it: it is the question a user is actually asking.
+    const h = d.health || {};
+    const vColor = h.verdict === 'current' ? 'var(--good)'
+      : (h.verdict === 'degraded' || h.verdict === 'no_model') ? 'var(--bad)'
+      : 'var(--warn)';
+    const healthBlock = h.verdict ? `<div style="margin-bottom:14px">
+        <span class="tag" style="border-color:${vColor};color:${vColor};font-weight:700">
+          ${esc(String(h.verdict).replace(/_/g, ' ').toUpperCase())}</span>
+        ${(h.usable_months || []).length
+          ? `<span class="tag" style="margin-left:6px">training months: ${esc(h.usable_months.join(', '))}</span>` : ''}
+        ${(h.rejected_months || []).length
+          ? `<span class="tag" style="margin-left:6px;color:var(--warn);border-color:#3a2f1c">
+               skipped: ${esc(h.rejected_months.join(', '))}</span>` : ''}
+      </div>
+      ${(h.reasons || []).map(r =>
+        `<div class="note" style="border-color:${vColor};color:${vColor}">${esc(r)}</div>`).join('')}` : '';
+
+    f.innerHTML = healthBlock + `<table><tbody>
       <tr><td>Operating mode</td><td class="num"><span class="badge ${esc(d.mode)}"><span class="dot"></span>${esc(d.mode)}</span></td></tr>
       <tr><td>Latest publication</td><td class="num" style="font-size:11px">${esc((d.latest_posted_at||'—').slice(0,19))}</td></tr>
       <tr><td>Latest stat reading</td><td class="num" style="font-size:11px">${esc((d.latest_stats_updated_at||'—').slice(0,19))}</td></tr>

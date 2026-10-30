@@ -27,7 +27,7 @@ from src.common.config import SETTINGS  # noqa: E402
 from src.common.logging import get_logger  # noqa: E402
 from src.inference.portable import export_portable_spec  # noqa: E402
 from src.inference.predictor import Predictor  # noqa: E402
-from src.monitoring import freshness  # noqa: E402
+from src.monitoring import freshness, health  # noqa: E402
 
 log = get_logger("export")
 
@@ -90,6 +90,12 @@ def main() -> int:
         "available": analytics.is_ready(),
         "files": [p.name for p in sorted(SETTINGS.paths.data_samples.glob("*.parquet"))],
     }
+    try:
+        status["health"] = health.model_health()
+    except Exception as exc:  # pragma: no cover - defensive
+        log.warning("health assessment failed: %s", exc)
+        status["health"] = {"verdict": "unknown", "reasons": [str(exc)]}
+
     status["deployment"] = {
         "kind": "serverless",
         "note": (
