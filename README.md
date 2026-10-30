@@ -4,7 +4,7 @@
 
 **TikTok virality intelligence — predict which videos break out, explain why, and prove the predictions hold up in a later period.**
 
-[![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen?style=flat-square)](#verification)
+[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen?style=flat-square)](#verification)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square)](pyproject.toml)
 [![API](https://img.shields.io/badge/API-FastAPI-009688?style=flat-square)](api/main.py)
 [![Data](https://img.shields.io/badge/dataset-CC%20BY--NC%204.0-lightgrey?style=flat-square)](docs/data_sources.md)
@@ -35,8 +35,35 @@ on this feature set.
 
 ---
 
+## What actually works today
+
+| Capability | Status |
+|---|---|
+| Remote dataset audit (460 GB, no full download) | Implemented, verified against the live source |
+| Reproducible stratified sampling | Implemented, verified |
+| Cohort-relative labelling with leakage guards | Implemented, unit-tested |
+| Chronological train / validation / test split | Implemented, unit-tested |
+| CatBoost / LightGBM / Random Forest / Logistic Regression benchmark | Implemented, executed |
+| Calibrated probabilities, percentile, expected view range | Implemented |
+| SHAP attribution, tree **and** linear models | Implemented |
+| FastAPI inference + persistence | Implemented, tested |
+| Dashboard wired to real endpoints | Implemented, browser-verified |
+| Data freshness / operating-mode reporting | Implemented |
+| Trend detection (accelerating hashtags and sounds) | Implemented — retrospective, with the measured lag disclosed |
+| Next-trend **forecasting** | **Not possible** with this dataset — [measured evidence](reports/research/trend_forecast_feasibility.md) |
+| Early-traction prediction (velocity) | **Blocked** — needs repeated observations |
+| Multimodal (video / audio) features | **Not implemented** — no media in the source |
+| Live TikTok ingestion | **Not implemented** — requires approved API access |
+
+Where a capability is missing, the API says so (`409`, `503`, or `available: false`) instead of
+approximating. The trend panel reports detection with a measured ~27-day lag rather than implying
+a forecast.
+
+---
+
 ## Contents
 
+- [What actually works today](#what-actually-works-today)
 - [The finding that shapes everything](#the-finding-that-shapes-everything)
 - [Measured results](#measured-results)
 - [How it works](#how-it-works)
@@ -408,6 +435,7 @@ Details in [`deploy/vercel/README.md`](deploy/vercel/README.md).
 **Project documents**
 - [Architecture](docs/architecture.md) · [Methodology](docs/methodology.md) · [Evaluation protocol](docs/evaluation_protocol.md)
 - [Data dictionary](docs/data_dictionary.md) · [Data sources](docs/data_sources.md) · [Model card](docs/model_card.md)
+- [Dataset audit](reports/research/dataset_audit.md) · [Can we predict the next trend?](reports/research/trend_forecast_feasibility.md)
 
 ---
 

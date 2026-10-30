@@ -231,6 +231,29 @@ def trends(limit: int = 15) -> dict:
             "estimates from the sparsely sampled file carry more sampling error."
         )
 
+    # State the lag explicitly. Measured rise time for hashtags is 7-11 days, while the
+    # corpus arrives ~27 days late — so this panel reports the past, and saying so is the
+    # difference between a useful analytic and a misleading one.
+    # See reports/research/trend_forecast_feasibility.md.
+    lag_days = None
+    try:
+        from src.monitoring import freshness
+
+        lag_days = freshness.get_status().get("publication_delay_days")
+    except Exception:  # pragma: no cover - freshness is advisory
+        lag_days = None
+
+    forecast_note = (
+        "This is detection, not prediction: it ranks hashtags and sounds that were already "
+        "accelerating as of the last day of data."
+    )
+    if lag_days is not None:
+        forecast_note += (
+            f" That day is {lag_days:.0f} days behind today, and a typical hashtag here rises "
+            "and peaks within 7–11 days — so trends shown have usually already peaked. "
+            "Forecasting the next trend needs repeated observations, not this snapshot corpus."
+        )
+
     return {
         "available": True,
         "window": {
@@ -239,6 +262,9 @@ def trends(limit: int = 15) -> dict:
             "acceleration_note": note,
             "counts_are_weighted": not uniform,
         },
+        "data_lag_days": lag_days,
+        "capability": "detection",
+        "forecast_note": forecast_note,
         "accelerating_hashtags": [
             {"hashtag": r[0], "uses": round(float(r[1])), "uses_last_7d": round(float(r[2])),
              "uses_prior": round(float(r[3])),

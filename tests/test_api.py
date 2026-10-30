@@ -199,5 +199,21 @@ def test_unknown_route_is_404(client):
     assert client.get("/api/v1/nope").status_code == 404
 
 
+def test_trends_declares_it_is_detection_not_forecast(client):
+    """The trends panel must not be mistakable for a forecast.
+
+    Hashtags here rise and peak in 7-11 days while the corpus arrives ~27 days late,
+    so any "trending" list is retrospective. The API states the lag explicitly.
+    See reports/research/trend_forecast_feasibility.md.
+    """
+    body = client.get("/api/v1/trends?limit=3").json()
+    if not body.get("available"):
+        pytest.skip("no sample data in this environment")
+    assert body["capability"] == "detection"
+    assert body["forecast_note"], "a lag disclosure must accompany the trend ranking"
+    assert "detection, not prediction" in body["forecast_note"].lower()
+    assert isinstance(body["data_lag_days"], (int, float))
+
+
 def test_post_route_rejects_get(client):
     assert client.get("/api/v1/predictions/prepublish").status_code == 405

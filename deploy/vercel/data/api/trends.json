@@ -6,6 +6,9 @@
     "acceleration_note": "Acceleration compares the final 7 days of the observed window against all earlier days in that window. Counts are weighted by the inverse sampling fraction, so a 1%-sampled month and a fully-sampled month are comparable. These are historical observations, not a live trend feed. A tag marked 'emerging' had no meaningful prior usage inside the window, so no ratio is reported for it \u2014 a first appearance is not an acceleration. Sample files were built at different fractions; weights correct for this, but estimates from the sparsely sampled file carry more sampling error.",
     "counts_are_weighted": true
   },
+  "data_lag_days": 26.9,
+  "capability": "detection",
+  "forecast_note": "This is detection, not prediction: it ranks hashtags and sounds that were already accelerating as of the last day of data. That day is 27 days behind today, and a typical hashtag here rises and peaks within 7\u201311 days \u2014 so trends shown have usually already peaked. Forecasting the next trend needs repeated observations, not this snapshot corpus.",
   "accelerating_hashtags": [
     {
       "hashtag": "reggie",

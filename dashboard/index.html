@@ -185,7 +185,7 @@
   <!-- TRENDS -->
   <section id="tab-trends" class="hide">
     <div class="card" style="margin-bottom:14px">
-      <h3>Observation window</h3>
+      <h3>Observation window — detection, not prediction</h3>
       <div id="trendWindow" class="state">loading…</div>
     </div>
     <div class="grid g2">
@@ -531,10 +531,15 @@ async function loadTrends(){
   try {
     const t = await api('/trends?limit=12');
     if (!t.available){ emptyState(w, 'No trend data', 'Sample data unavailable.'); return; }
+    const lag = t.data_lag_days;
     w.innerHTML = `<div style="text-align:left">
-      <div class="kpi sm">${esc((t.window.start||'').slice(0,10))} → ${esc((t.window.end||'').slice(0,10))}</div>
+      <div class="kpi sm">${esc((t.window.start||'').slice(0,10))} → ${esc((t.window.end||'').slice(0,10))}
+        ${lag != null ? `<span class="tag" style="margin-left:8px">${lag} days behind today</span>` : ''}
+        <span class="tag" style="margin-left:6px">detection, not forecast</span></div>
+      ${t.forecast_note ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+        ${esc(t.forecast_note)}</div>` : ''}
       <div class="note">${esc(t.window.acceleration_note)}</div>
-      ${t.caveat ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">${esc(t.caveat)}</div>` : ''}
+      ${t.caveat ? `<div class="note">${esc(t.caveat)}</div>` : ''}
     </div>`;
 
     const accelCell = (v) => v == null
