@@ -113,6 +113,7 @@ def model_evaluation(run_id: str | None = None) -> dict:
         "splits": payload.get("splits"),
         "label_definition": payload.get("thresholds"),
         "label_diagnostics": payload.get("label_diagnostics"),
+        "sound_coverage": payload.get("sound_coverage"),
         "champion": registry.get("active_model"),
         "selection_rule": (
             "Champion is the highest test PR-AUC, breaking ties on Precision@K. PR-AUC is used "

@@ -57,13 +57,15 @@ most consequential limitation in the project.
 
 Measured across the shipped split (train = 2026-09, test = 2026-10):
 
-| | |
-|---|---:|
-| Distinct sounds in the training month | 303,974 |
-| Test rows carrying a sound | 199,998 |
-| **Test rows whose sound never appeared in training** | **160,237 (80.1%)** |
+| Split | Rows | Rows with an unseen sound | Share |
+|---|---:|---:|---:|
+| train (2026-09) | 300,000 | 0 | 0.00% (by construction) |
+| val (first half 2026-10) | 200,002 | 160,929 | 80.46% |
+| test (second half 2026-10) | 199,998 | 163,682 | **81.84%** |
 
-Four out of five videos in the next month use a sound the model has never seen. Those rows receive
+Both forward splits agree, so this is a property of the month boundary rather than of one
+particular sample: **roughly four out of five videos in the next month use a sound the model has
+never seen.** Those rows receive
 `NULL` sound features, which the encoder imputes to the training median — so the model treats them
 as *average* sounds and falls back on country, language, format, duration and timing.
 

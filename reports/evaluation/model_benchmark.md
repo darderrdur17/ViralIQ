@@ -1,8 +1,8 @@
 # Model Benchmark
 
-Run: `20261030T122402_primary_75992a`  
-Trained: 2026-10-30T12:26:44.023893+00:00  
-Wall time: 165.3 s  
+Run: `20261030T130835_primary_936c49`  
+Trained: 2026-10-30T13:10:26.187491+00:00  
+Wall time: 113.3 s  
 Samples: r__2026-10.parquet, s__2026-09.parquet
 
 ## Splits

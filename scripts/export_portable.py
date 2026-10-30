@@ -173,6 +173,7 @@ def main() -> int:
             "splits": run.get("splits"),
             "label_definition": run.get("thresholds"),
             "label_diagnostics": run.get("label_diagnostics"),
+            "sound_coverage": run.get("sound_coverage"),
             "champion": registry.get("active_model"),
             "selection_rule": (
                 "Champion is the highest test PR-AUC, breaking ties on Precision@K. PR-AUC is "

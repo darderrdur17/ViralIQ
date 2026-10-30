@@ -1,6 +1,6 @@
 # Model Card
 
-**Version** `E1_logistic_regression@20261030T122402_primary_75992a`
+**Version** `E1_logistic_regression@20261030T130835_primary_936c49`
 
 ## Intended use
 

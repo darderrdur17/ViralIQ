@@ -698,8 +698,18 @@ async function loadModels(){
       <tr><td>Excluded (bad clock)</td><td class="num">${diag.pct_excluded_invalid_clock ?? '—'}%</td></tr>
       <tr><td>Prevalence</td><td class="num">${pct(diag.prevalence_valid, 3)}</td></tr>
       <tr><td>Fixed-age labels</td><td class="num" style="color:var(--warn)">unavailable</td></tr>
+      ${e.sound_coverage?.test ? `<tr><td>Unseen sounds (test)</td>
+        <td class="num" style="color:${e.sound_coverage.test.pct_unseen_sound > 50 ? 'var(--warn)' : 'var(--muted)'}">
+        ${e.sound_coverage.test.pct_unseen_sound}%</td></tr>` : ''}
     </tbody></table>
-    <div class="note">${esc(diag.fixed_age_label_reason || '')}</div>`;
+    <div class="note">${esc(diag.fixed_age_label_reason || '')}</div>
+    ${e.sound_coverage?.test && e.sound_coverage.test.pct_unseen_sound > 50
+      ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+           ${e.sound_coverage.test.pct_unseen_sound}% of the test month uses a sound never seen in
+           training. Those rows get neutral sound features, so the model falls back on country,
+           language, format, duration and timing — sound is the top-importance feature but is
+           largely absent one month forward.</div>`
+      : ''}`;
   } catch(e){
     if (e.status === 503) emptyState(el, 'No model registry', 'Train a model with scripts/train.py.');
     else errorState(el, e);

@@ -142,7 +142,7 @@ API, the dashboard, and the reports. Full evidence in
 
 ## Measured results
 
-Run `20261030T122402_primary_75992a`. **Train** = 2026-09 (300,000 rows). **Test** = 2026-10
+Run `20261030T130835_primary_936c49`. **Train** = 2026-09 (300,000 rows). **Test** = 2026-10
 (199,998 rows), a later month never seen during fitting, calibration, or threshold selection.
 
 | Model | PR-AUC | 95% CI | ROC-AUC | Precision@1000 | Lift@1000 | Brier |
@@ -435,7 +435,7 @@ Beyond unit tests:
 - **No visual or audio content.** The dataset carries metadata, not media.
 - **Sound features decay faster than the data refreshes.** Frozen at the training window by
   necessity — using present-day popularity to score a past video would be leakage. Measured:
-  **80.1%** of next-month videos use a sound never seen in training, so the strongest feature is
+  **81.8%** of next-month videos use a sound never seen in training, so the strongest feature is
   absent for four rows in five.
 - **Historical-data mode.** Measured publication coverage lags the audit clock by **26.9 days**;
   the app reports this rather than presenting stale data as live.

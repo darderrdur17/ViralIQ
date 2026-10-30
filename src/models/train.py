@@ -279,6 +279,7 @@ class TrainingRun:
     metrics: dict[str, dict]
     label_diagnostics: dict[str, Any]
     label_quality: dict[str, Any]
+    sound_coverage: dict[str, Any]
     thresholds: dict[str, Any]
     splits: dict[str, dict]
     feature_importance: dict[str, list[dict]]
@@ -377,6 +378,27 @@ def run_training(
     featured = {
         k: build_prepublication_features(v, sound_stats) for k, v in labeled.items()
     }
+
+    # How much of each forward split uses a sound the model has never seen. This is the
+    # most consequential data limitation in the project: sound is the top-importance
+    # feature for the boosters, but ~81% of the next month carries an unseen sound and
+    # therefore receives NULL sound features imputed to the training median.
+    sound_coverage: dict[str, Any] = {}
+    for split_name, frame in featured.items():
+        if not frame.height or "sound_train_usage_log" not in frame.columns:
+            continue
+        col = frame["sound_train_usage_log"]
+        unseen = int(col.is_null().sum())
+        sound_coverage[split_name] = {
+            "rows": int(col.len()),
+            "unseen_sound_rows": unseen,
+            "pct_unseen_sound": round(100.0 * unseen / max(col.len(), 1), 2),
+        }
+    if "test" in sound_coverage:
+        log.info(
+            "sound coverage: %.1f%% of the test split uses an unseen sound",
+            sound_coverage["test"]["pct_unseen_sound"],
+        )
 
     encoder = FeatureEncoder().fit(featured["train"])
     X = {k: encoder.transform(v) for k, v in featured.items()}
@@ -569,6 +591,7 @@ def run_training(
         metrics=results,
         label_diagnostics=diag,
         label_quality=label_quality,
+        sound_coverage=sound_coverage,
         thresholds=thresholds.as_dict(),
         splits=split_meta,
         feature_importance=importance,
