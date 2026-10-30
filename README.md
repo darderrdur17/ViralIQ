@@ -38,10 +38,15 @@ on this feature set.
 
 ## See it
 
+Metadata in, calibrated score out — with expected reach and the features that drove it:
+
+![ViralIQ prediction flow — filling the form, scoring, and the explained result](docs/screenshots/prediction-flow.gif)
+
+**Overview** — dataset scale, coverage, and performance by duration:
+
 ![ViralIQ overview — dataset scale, coverage and performance by duration](docs/screenshots/overview.png)
 
-**Prediction Studio** — every score arrives with its expected reach, the features that drove it,
-and the limitations that apply:
+**Prediction Studio** — every score carries its expected reach, its drivers, and its limitations:
 
 ![Prediction Studio — a calibrated score with expected views and SHAP drivers](docs/screenshots/prediction-studio.png)
 
