@@ -16,10 +16,15 @@ This project analyses a dataset it does not own and does not redistribute:
 That dataset is licensed CC BY-NC 4.0 (Attribution-NonCommercial 4.0 International), which
 prohibits commercial use. Nothing here grants rights to it.
 
-The repository does contain one derived file, `data/fixtures/demo_sample.parquet` — 20,000 rows
-sampled from the source, included only so a fresh clone can be demonstrated without downloading the
-full corpus. It remains subject to CC BY-NC 4.0: non-commercial use only, attribution required. No
-other dataset rows are committed, and no full partition is redistributed here.
+The repository contains two derived artefacts of that dataset:
+
+- `data/fixtures/demo_sample.parquet` — 20,000 rows sampled from the source, included so a fresh
+  clone can be demonstrated without downloading the full corpus.
+- `deploy/vercel/data/sound_stats.parquet` — per-sound usage counts and median view counts computed
+  from the training window, shipped so the serverless build can reconstruct features.
+
+Both remain subject to CC BY-NC 4.0: non-commercial use only, attribution required. No full
+partition is redistributed here.
 
 Third-party Python dependencies remain under their own licences.
 

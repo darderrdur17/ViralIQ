@@ -590,11 +590,12 @@ dataset's terms.
 Data: the underlying dataset is **CC BY-NC 4.0** — **non-commercial only**. Commercial deployment
 requires a separate licence from the dataset publisher.
 
-**One data file is committed**: `data/fixtures/demo_sample.parquet`, 20,000 rows (2.1 MB) used
-solely so a fresh clone can demo without a download. It is a derived sample of the CC BY-NC 4.0
-source and inherits those terms; provenance is in
-[`data/fixtures/README.md`](data/fixtures/README.md). Everything else — full samples, model
-artefacts and the application database — is gitignored.
+**Two derived data artefacts are committed**, both inheriting the source's CC BY-NC 4.0 terms:
+`data/fixtures/demo_sample.parquet` (20,000 rows, so a fresh clone can demo without a download — see
+[`data/fixtures/README.md`](data/fixtures/README.md)) and
+`deploy/vercel/data/sound_stats.parquet` (per-sound statistics the serverless build needs to
+reconstruct features). Everything else — full samples, model artefacts and the application database
+— is gitignored.
 
 <div align="center">
 <sub>Built with DuckDB, Polars, scikit-learn, CatBoost, LightGBM, SHAP and FastAPI.</sub>
