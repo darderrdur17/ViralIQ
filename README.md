@@ -302,7 +302,7 @@ api/                    FastAPI app · routes · schemas · DuckDB persistence
 dashboard/              single-page analytics UI (no build step)
 docs/                   architecture · methodology · data dictionary · model card · limitations
 reports/                generated audit · benchmark · executive summary
-tests/                  63 tests: labels, metrics, encoder, splits, importer, attribution, parity, store, deploy sync
+tests/                  70 tests: labels, metrics, encoder, splits, importer, attribution, parity, store, deploy sync
 deploy/vercel/          generated serverless project (portable model + pre-computed payloads)
 ```
 
@@ -311,7 +311,7 @@ deploy/vercel/          generated serverless project (portable model + pre-compu
 ## Verification
 
 ```bash
-python3 -m pytest tests/ -q              # 63 passed
+python3 -m pytest tests/ -q              # 70 passed
 python3 -m ruff check src api scripts tests   # clean
 ```
 

@@ -53,6 +53,7 @@ def data_schema(check_source: bool = True) -> dict:
         cols = [r[0] for r in con.execute(f"DESCRIBE SELECT * FROM read_parquet('{url}')").fetchall()]
     check = quality.validate_schema(cols)
     return {
+        "available": True,
         "partition": parts[-1].path,
         "columns": cols,
         "check": check.as_dict(),

@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from src.common.middleware import HeadAsGetMiddleware  # noqa: E402
 from src.feature_engineering.features import build_prepublication_features  # noqa: E402
 from src.inference.portable import PortableModel  # noqa: E402
 
@@ -88,6 +89,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(HeadAsGetMiddleware)
 
 
 # --------------------------------------------------------------------------- #
@@ -444,13 +446,22 @@ def data_status(check_source: bool = False) -> dict:
 
 @app.get("/api/v1/data/schema")
 def data_schema(check_source: bool = True) -> dict:
-    raise HTTPException(
-        status_code=503,
-        detail=(
-            "Schema verification queries the Hugging Face source directly and is not available "
-            "in the serverless deployment. Run scripts/audit.py locally."
+    """Same contract as the full service, with an explicit unavailability.
+
+    The full service answers ``available: true`` plus the measured schema. This
+    deployment cannot reach the Hugging Face source, so it answers ``available:
+    false`` — the same shape the analytics routes use for missing data — rather than
+    a 503 that reads as a server fault.
+    """
+    return {
+        "available": False,
+        "reason": "remote_schema_check_unavailable",
+        "message": (
+            "Schema verification queries the Hugging Face source directly, which this "
+            "serverless deployment cannot reach."
         ),
-    )
+        "how_to_run": "python scripts/audit.py --tail 2",
+    }
 
 
 @app.post("/api/v1/data/import")

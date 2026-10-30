@@ -17,6 +17,7 @@ from api.routes import analytics, data, models, predictions
 from api.services import store
 from src.common.config import SETTINGS
 from src.common.logging import get_logger
+from src.common.middleware import HeadAsGetMiddleware
 from src.monitoring import freshness
 
 log = get_logger("api")
@@ -64,6 +65,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Serve HEAD for every GET route; FastAPI does not register it automatically.
+app.add_middleware(HeadAsGetMiddleware)
 
 
 @app.exception_handler(Exception)

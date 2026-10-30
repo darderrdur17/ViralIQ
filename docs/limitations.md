@@ -101,11 +101,21 @@ file**, so:
 For horizontal scaling, replace the store with PostgreSQL — the schema is already
 Postgres-compatible. This is a deliberate MVP trade-off, not an oversight.
 
-## 11b. HEAD is not supported on API routes
+## 11b. Capability differences between the two deployments
 
-FastAPI's `APIRoute` does not add `HEAD` alongside `GET`, so `HEAD /api/v1/health` returns `405`.
-Uptime monitors that probe with `GET` are unaffected. The dashboard root (`/`) does accept `HEAD`,
-because link checkers use it there.
+The full service and the serverless function expose the same routes and the same response
+*shapes*, but not the same capabilities. Where a capability is missing, the response says so with
+`available: false` and a reason — the same pattern the analytics routes use — rather than returning
+a 5xx that reads as a fault.
+
+| Route | Full service | Serverless |
+|---|---|---|
+| `GET /data/schema` | `available: true` + measured schema | `available: false`, `reason: remote_schema_check_unavailable` |
+| `GET /analytics/*` | Live DuckDB aggregates | Pre-computed snapshot, stamped with its measurement time |
+| `POST /data/import` | Writes to the sample corpus | `503 read_only_deployment` |
+| `GET /predictions/history` | Stored predictions | Empty, with a `deployment_note` |
+
+`HEAD` is served for every `GET` route by `src/common/middleware.py`, on both deployments.
 
 ## 12. What would make this materially stronger
 
