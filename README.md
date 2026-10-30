@@ -5,7 +5,6 @@
 **TikTok virality intelligence — predict which videos break out, explain why, and prove the predictions hold up in a later period.**
 
 [![CI](https://github.com/darderrdur17/ViralIQ/actions/workflows/ci.yml/badge.svg)](https://github.com/darderrdur17/ViralIQ/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen?style=flat-square)](#verification)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square)](pyproject.toml)
 [![API](https://img.shields.io/badge/API-FastAPI-009688?style=flat-square)](api/main.py)
 [![Data](https://img.shields.io/badge/dataset-CC%20BY--NC%204.0-lightgrey?style=flat-square)](docs/data_sources.md)
@@ -468,7 +467,7 @@ api/                    FastAPI app · routes · schemas · DuckDB persistence
 dashboard/              single-page analytics UI (no build step)
 docs/                   architecture · methodology · data dictionary · model card · limitations
 reports/                generated audit · benchmark · executive summary
-tests/                  70 tests: labels, metrics, encoder, splits, importer, attribution, parity, store, deploy sync
+tests/                  labels, metrics, encoder, splits, importer, attribution, parity, store, deploy sync
 deploy/vercel/          generated serverless project (portable model + pre-computed payloads)
 ```
 
@@ -477,7 +476,7 @@ deploy/vercel/          generated serverless project (portable model + pre-compu
 ## Verification
 
 ```bash
-python3 -m pytest tests/ -q              # 70 passed
+python3 -m pytest tests/ -q              # full suite
 python3 -m ruff check src api scripts tests   # clean
 ```
 
