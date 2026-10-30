@@ -355,6 +355,12 @@ def render_model_card(run: dict) -> str:
 
 
 def _champion(run: dict) -> str | None:
+    # Reports describe the model that is serving, which is not always the PR-AUC winner:
+    # a demo can pin a champion, and a pinned run would otherwise publish a model card
+    # contradicting the registry.
+    override = run.get("champion_override")
+    if override:
+        return override
     scored = []
     for name, entry in run["metrics"].items():
         if name.startswith("E0"):
@@ -365,8 +371,10 @@ def _champion(run: dict) -> str | None:
     return max(scored)[1] if scored else None
 
 
-def write_reports(run_path: Path) -> dict[str, str]:
+def write_reports(run_path: Path, champion: str | None = None) -> dict[str, str]:
     run = json.loads(Path(run_path).read_text(encoding="utf-8"))
+    if champion:
+        run["champion_override"] = champion
     outputs = {
         "benchmark": SETTINGS.paths.reports_evaluation / "model_benchmark.md",
         "executive": SETTINGS.paths.reports_executive / "executive_summary.md",

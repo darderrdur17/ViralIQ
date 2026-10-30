@@ -58,3 +58,34 @@ def test_serverless_dashboard_copy_matches_source():
         "deploy/vercel/public/index.html is stale. "
         "Run `python scripts/export_portable.py` and commit the result."
     )
+
+
+def test_published_reports_describe_the_active_run():
+    """A candidate run must never overwrite the published reports.
+
+    This caught a real bug: `refresh.py --candidate-only` wrote the model card from the
+    candidate, so docs/model_card.md and reports/ described a 0.0062 model while the
+    README and dashboard still pointed at the 0.0318 one.
+    """
+    import json
+
+    registry_path = ROOT / "models" / "model_registry" / "index.json"
+    if not registry_path.exists():
+        import pytest
+
+        pytest.skip("no model registry in this environment")
+
+    registry = json.loads(registry_path.read_text())
+    active_run = registry.get("active_run")
+    active_model = registry.get("active_model")
+    if not active_run:
+        import pytest
+
+        pytest.skip("registry has no active run")
+
+    card = (ROOT / "docs" / "model_card.md").read_text()
+    bench = (ROOT / "reports" / "evaluation" / "model_benchmark.md").read_text()
+
+    assert active_run in card, "model card describes a run that is not serving"
+    assert active_model in card, "model card names a model that is not serving"
+    assert active_run in bench, "benchmark report describes a run that is not serving"

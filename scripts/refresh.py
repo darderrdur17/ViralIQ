@@ -161,7 +161,13 @@ def main() -> int:
         max_rows_per_split=args.max_rows,
         activate=not args.candidate_only,
     )
-    write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json")
+    # Published reports describe the model that is serving. A candidate must never
+    # overwrite them: doing so silently contradicts the README and the dashboard, which
+    # still point at the active run.
+    if args.candidate_only:
+        log.info("candidate run %s: published reports left untouched", run.run_id)
+    else:
+        write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json")
 
     champion = max(
         (

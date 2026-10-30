@@ -98,7 +98,6 @@ def main() -> int:
         max_rows_per_split=args.rows,
         file_row_cap=args.rows,
     )
-    write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json")
 
     # Pin the champion. The demo exists to mirror the product, and the product ships a
     # linear model because the serverless deployment exports an affine surrogate of it.
@@ -136,6 +135,10 @@ def main() -> int:
         registry_path.write_text(json.dumps(registry, indent=2), encoding="utf-8")
 
     active_model = json.loads(registry_path.read_text())["active_model"]
+
+    # Written after pinning, and told which model serves, so the model card cannot
+    # contradict the registry.
+    write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json", champion=active_model)
 
     print()
     print("=" * 68)
