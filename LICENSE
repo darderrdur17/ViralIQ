@@ -1,0 +1,31 @@
+Copyright (c) 2026 Derren Winata. All rights reserved.
+
+This repository is published as a portfolio and evaluation artefact. You are welcome to read it,
+clone it, and run it locally to assess the work.
+
+Redistribution, republication, or any commercial use of this code requires written permission.
+
+--------------------------------------------------------------------------------
+Third-party data
+--------------------------------------------------------------------------------
+
+This project analyses a dataset it does not own and does not redistribute:
+
+  datasocial/tiktok-5.6B-videos  —  https://huggingface.co/datasets/datasocial/tiktok-5.6B-videos
+
+That dataset is licensed CC BY-NC 4.0 (Attribution-NonCommercial 4.0 International), which
+prohibits commercial use. Nothing here grants rights to it, and no dataset rows are committed to
+this repository.
+
+Third-party Python dependencies remain under their own licences.
+
+--------------------------------------------------------------------------------
+Note for the repository owner
+--------------------------------------------------------------------------------
+
+If you would prefer this code to be reusable rather than all-rights-reserved, replace this file
+with a permissive licence — MIT is the usual choice for portfolio work:
+
+  https://choosealicense.com/licenses/mit/
+
+Doing so does not affect the dataset's CC BY-NC 4.0 terms, which apply independently.

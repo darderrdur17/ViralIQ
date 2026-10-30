@@ -4,6 +4,7 @@
 
 **TikTok virality intelligence — predict which videos break out, explain why, and prove the predictions hold up in a later period.**
 
+[![CI](https://github.com/darderrdur17/ViralIQ/actions/workflows/ci.yml/badge.svg)](https://github.com/darderrdur17/ViralIQ/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-71%20passing-brightgreen?style=flat-square)](#verification)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square)](pyproject.toml)
 [![API](https://img.shields.io/badge/API-FastAPI-009688?style=flat-square)](api/main.py)
@@ -35,6 +36,31 @@ on this feature set.
 
 ---
 
+## See it
+
+![ViralIQ overview — dataset scale, coverage and performance by duration](docs/screenshots/overview.png)
+
+**Prediction Studio** — every score arrives with its expected reach, the features that drove it,
+and the limitations that apply:
+
+![Prediction Studio — a calibrated score with expected views and SHAP drivers](docs/screenshots/prediction-studio.png)
+
+<details>
+<summary><b>Model Laboratory</b> — the benchmark, the champion, and the trade-off it hides</summary>
+
+![Model Laboratory — six models on identical splits, champion marked](docs/screenshots/model-laboratory.png)
+
+</details>
+
+<details>
+<summary><b>Trend Intelligence</b> — detection, with the lag stated rather than hidden</summary>
+
+![Trend Intelligence — accelerating hashtags and sounds, labelled as detection not prediction](docs/screenshots/trend-intelligence.png)
+
+</details>
+
+---
+
 ## What actually works today
 
 | Capability | Status |
@@ -63,6 +89,7 @@ a forecast.
 
 ## Contents
 
+- [See it](#see-it)
 - [What actually works today](#what-actually-works-today)
 - [The finding that shapes everything](#the-finding-that-shapes-everything)
 - [Measured results](#measured-results)
@@ -441,9 +468,12 @@ Details in [`deploy/vercel/README.md`](deploy/vercel/README.md).
 
 ## Licence and attribution
 
-Code in this repository is provided for research and portfolio use. The underlying dataset is
-**CC BY-NC 4.0** — **non-commercial only**. Commercial deployment requires a separate licence from
-the dataset publisher.
+Code: see [LICENSE](LICENSE) — published as a portfolio artefact, all rights reserved, free to read
+and run locally. Swap in MIT if you would rather it be reusable; that choice does not affect the
+dataset's terms.
+
+Data: the underlying dataset is **CC BY-NC 4.0** — **non-commercial only**. Commercial deployment
+requires a separate licence from the dataset publisher.
 
 No dataset rows are committed. `data/`, `models/` and the application database are gitignored.
 
