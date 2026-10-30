@@ -1,0 +1,35 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# ---- Data (never commit the dataset) ----
+data/raw/*
+data/external/*
+data/interim/*
+data/processed/*
+data/samples/*
+data/metadata/*
+!data/**/.gitkeep
+
+# ---- Model artefacts ----
+models/trained/*
+models/checkpoints/*
+models/model_registry/*
+!models/**/.gitkeep
+
+# ---- Application database ----
+database/*.duckdb
+database/*.duckdb.wal
+
+# ---- Notebooks ----
+.ipynb_checkpoints/
+
+# ---- OS / editor ----
+.DS_Store
+.idea/
+.vscode/
+*.log

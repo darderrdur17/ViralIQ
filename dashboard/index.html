@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ViralIQ — TikTok Virality Intelligence</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121821; --panel-2:#0f151d; --line:#1e2836;
+    --text:#e6edf5; --muted:#8b9bb0; --dim:#5d6b7d;
+    --accent:#4cc2ff; --accent-2:#7c5cff; --good:#3ddc97; --warn:#ffb454; --bad:#ff5c7a;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
+    font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  .wrap{max-width:1240px;margin:0 auto;padding:22px 24px 64px}
+
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;font-weight:800;font-size:15px;color:#04070b}
+  h1{font-size:17px;margin:0;font-weight:650;letter-spacing:-.2px}
+  .sub{color:var(--dim);font-size:11.5px;margin-top:-1px}
+  .spacer{flex:1}
+
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+    font-size:11.5px;font-weight:600;border:1px solid var(--line);background:var(--panel)}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
+  .badge.live .dot{background:var(--good);box-shadow:0 0 8px var(--good)}
+  .badge.historical .dot{background:var(--warn)}
+  .badge.unavailable .dot{background:var(--bad)}
+  .badge.historical{border-color:#3a2f1c;background:#1a1510;color:#ffcf94}
+
+  nav{display:flex;gap:4px;margin-bottom:22px;flex-wrap:wrap}
+  nav button{background:transparent;border:1px solid transparent;color:var(--muted);
+    padding:7px 13px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:550;
+    font-family:inherit;transition:.15s}
+  nav button:hover{color:var(--text);background:var(--panel)}
+  nav button.active{background:var(--panel);color:var(--text);border-color:var(--line)}
+
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+  @media(max-width:620px){.g4,.g3,.g2{grid-template-columns:1fr}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .card h3{margin:0 0 12px;font-size:12px;font-weight:650;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.7px}
+  .kpi{font-size:26px;font-weight:680;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+  .kpi.sm{font-size:19px}
+  .kpi-label{color:var(--dim);font-size:11.5px;margin-top:3px}
+  .unit{font-size:13px;color:var(--muted);font-weight:500}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;color:var(--dim);font-weight:600;font-size:11px;
+    text-transform:uppercase;letter-spacing:.5px;padding:7px 8px;border-bottom:1px solid var(--line)}
+  td{padding:7px 8px;border-bottom:1px solid #161e28;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  .num{text-align:right;font-family:var(--mono);font-size:12px}
+
+  .field{margin-bottom:12px}
+  label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:5px;font-weight:550}
+  input,select,textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--text);padding:8px 10px;border-radius:8px;font-family:inherit;font-size:13px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  button.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04070b;
+    border:none;padding:10px 18px;border-radius:9px;font-weight:700;font-size:13px;
+    cursor:pointer;font-family:inherit;width:100%}
+  button.primary:disabled{opacity:.5;cursor:not-allowed}
+  button.ghost{background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    padding:8px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12.5px}
+
+  .state{padding:28px;text-align:center;color:var(--muted);font-size:13px}
+  .state .big{font-size:15px;color:var(--text);margin-bottom:6px;font-weight:600}
+  .err{border-color:#3a1c26;background:#1a1013;color:#ffb3c2}
+
+  .bar{height:7px;border-radius:4px;background:#1a2432;overflow:hidden;margin-top:6px}
+  .bar>i{display:block;height:100%;border-radius:4px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+  .meter{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:4px}
+
+  .tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:11px;
+    font-family:var(--mono);background:#16202c;border:1px solid var(--line);color:var(--muted)}
+  .tag.pos{background:#0f2318;border-color:#1d4230;color:var(--good)}
+  .tag.neg{background:#231015;border-color:#431d26;color:var(--bad)}
+  .note{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:10px;
+    border-left:2px solid var(--line);padding-left:10px}
+  .hide{display:none}
+  .prob{font-size:38px;font-weight:700;letter-spacing:-1.2px;font-variant-numeric:tabular-nums}
+  .skel{background:linear-gradient(90deg,#141b24,#1c2634,#141b24);
+    background-size:200% 100%;animation:sh 1.3s infinite;border-radius:6px;height:14px}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">V</div>
+      <div>
+        <h1>ViralIQ</h1>
+        <div class="sub">TikTok virality intelligence</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <span id="modeBadge" class="badge"><span class="dot"></span><span>checking…</span></span>
+    <span id="modelBadge" class="badge"><span class="dot"></span><span>model…</span></span>
+  </header>
+
+  <nav>
+    <button data-tab="overview" class="active">Overview</button>
+    <button data-tab="predict">Prediction Studio</button>
+    <button data-tab="trends">Trend Intelligence</button>
+    <button data-tab="models">Model Laboratory</button>
+    <button data-tab="data">Data Operations</button>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <section id="tab-overview">
+    <div class="grid g4" id="kpis" style="margin-bottom:14px"></div>
+    <div class="grid g2">
+      <div class="card"><h3>Monthly coverage</h3><div id="monthly"></div></div>
+      <div class="card"><h3>Performance by duration</h3><div id="duration"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>Publication hour vs median views (UTC)</h3>
+      <div id="hours"></div>
+    </div>
+  </section>
+
+  <!-- PREDICT -->
+  <section id="tab-predict" class="hide">
+    <div class="grid g2">
+      <div class="card">
+        <h3>Pre-publication prediction</h3>
+        <p class="note" style="margin-top:0;margin-bottom:14px">
+          Only metadata that exists <em>before</em> publication is accepted. Engagement counters
+          are not part of this form because they are not knowable at prediction time.
+        </p>
+        <div class="field"><label>Caption</label>
+          <textarea id="p_caption" rows="3" placeholder="e.g. three ingredient pasta hack">three ingredient pasta hack nobody talks about</textarea></div>
+        <div class="row">
+          <div class="field"><label>Hashtags (comma separated)</label>
+            <input id="p_hashtags" value="foodtok,recipe" /></div>
+          <div class="field"><label>Duration (seconds)</label>
+            <input id="p_duration" type="number" value="21" min="1" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Country</label>
+            <input id="p_country" value="US" /></div>
+          <div class="field"><label>Language</label>
+            <input id="p_language" value="en" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Format</label>
+            <select id="p_type"><option value="video">video</option><option value="photo">photo</option></select></div>
+          <div class="field"><label>Sound ID (optional)</label>
+            <input id="p_sound" type="number" placeholder="leave blank" /></div>
+        </div>
+        <button class="primary" id="predictBtn">Predict virality</button>
+      </div>
+      <div class="card" id="resultCard">
+        <h3>Result</h3>
+        <div class="state" id="resultEmpty">
+          <div class="big">No prediction yet</div>
+          Submit the form to score this video against the active model.
+        </div>
+        <div id="resultBody" class="hide"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>Recent predictions</h3>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <!-- TRENDS -->
+  <section id="tab-trends" class="hide">
+    <div class="card" style="margin-bottom:14px">
+      <h3>Observation window</h3>
+      <div id="trendWindow" class="state">loading…</div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>Accelerating hashtags</h3><div id="trendTags"></div></div>
+      <div class="card"><h3>Accelerating sounds</h3><div id="trendSounds"></div></div>
+    </div>
+  </section>
+
+  <!-- MODELS -->
+  <section id="tab-models" class="hide">
+    <div class="card" style="margin-bottom:14px">
+      <h3>Model comparison — identical test split</h3>
+      <div id="modelTable"></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>Feature importance</h3><div id="importance"></div></div>
+      <div class="card"><h3>Label &amp; split definition</h3><div id="labelDef"></div></div>
+    </div>
+  </section>
+
+  <!-- DATA -->
+  <section id="tab-data" class="hide">
+    <div class="grid g2" style="margin-bottom:14px">
+      <div class="card"><h3>Freshness</h3><div id="freshness"></div></div>
+      <div class="card"><h3>Data quality</h3><div id="quality"></div></div>
+    </div>
+    <div class="card"><h3>Source &amp; ingestion</h3><div id="source"></div></div>
+  </section>
+</div>
+
+<script>
+const API = location.protocol === 'file:' ? 'http://localhost:8000/api/v1' : '/api/v1';
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = (n) => n == null ? '—' : Number(n).toLocaleString();
+const compact = (n) => n == null ? '—' :
+  Number(n) >= 1e9 ? (n/1e9).toFixed(2)+'B' :
+  Number(n) >= 1e6 ? (n/1e6).toFixed(2)+'M' :
+  Number(n) >= 1e3 ? (n/1e3).toFixed(1)+'K' : Number(n).toLocaleString();
+const pct = (n, d=1) => n == null ? '—' : (Number(n)*100).toFixed(d)+'%';
+
+function loading(el, msg='Loading…'){
+  el.innerHTML = `<div class="state"><div class="skel" style="width:60%;margin:0 auto 8px"></div>
+    <div class="skel" style="width:40%;margin:0 auto"></div>
+    <div style="margin-top:12px">${esc(msg)}</div></div>`;
+}
+function errorState(el, err){
+  el.innerHTML = `<div class="state err"><div class="big">Request failed</div>
+    ${esc(err.message || err)}<br><span style="font-size:11px">${esc(API)}</span></div>`;
+}
+function emptyState(el, title, body){
+  el.innerHTML = `<div class="state"><div class="big">${esc(title)}</div>${esc(body)}</div>`;
+}
+
+async function api(path, opts){
+  // Without a timeout a stalled request leaves the button spinning forever and the
+  // user with no signal that anything went wrong.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000);
+  let res;
+  try {
+    res = await fetch(API + path, {...(opts || {}), signal: controller.signal});
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error('Request timed out after 30s. The API may be busy or unreachable.');
+    }
+    throw new Error('Could not reach the API at ' + API + '. Is the server running?');
+  }
+  clearTimeout(timer);
+
+  const text = await res.text();
+  let body; try { body = text ? JSON.parse(text) : {}; } catch { body = { raw: text }; }
+  if (!res.ok) {
+    const d = body.detail;
+    const msg = typeof d === 'string' ? d : (d && (d.message || d.error)) || res.statusText;
+    const e = new Error(msg); e.status = res.status; e.body = body; throw e;
+  }
+  return body;
+}
+
+/* ---------------- tabs ---------------- */
+const TABS = ['overview','predict','trends','models','data'];
+
+function activateTab(name){
+  if (!TABS.includes(name)) name = 'overview';
+  document.querySelectorAll('nav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === name));
+  TABS.forEach(t => $('tab-'+t).classList.toggle('hide', t !== name));
+  if (name === 'trends' && !window._trendsLoaded) loadTrends();
+  if (name === 'models' && !window._modelsLoaded) loadModels();
+  if (name === 'data' && !window._dataLoaded) loadData();
+  if (name === 'predict' && !window._historyLoaded) { loadHistory(); window._historyLoaded = true; }
+}
+
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.onclick = () => {
+    // Deep-linkable tabs: the URL hash is the source of truth for which view is open.
+    if (location.hash !== '#' + btn.dataset.tab) location.hash = btn.dataset.tab;
+    else activateTab(btn.dataset.tab);
+  };
+});
+
+window.addEventListener('hashchange', () => activateTab(location.hash.slice(1)));
+
+/* ---------------- header ---------------- */
+async function loadHeader(){
+  try {
+    const h = await api('/health');
+    const badge = $('modeBadge');
+    const mode = h.data_mode || 'unavailable';
+    badge.className = 'badge ' + mode;
+    badge.innerHTML = `<span class="dot"></span><span>${esc(mode.replace('_',' '))} data</span>`;
+    badge.title = mode === 'historical'
+      ? `Publication coverage is ${h.publication_delay_days} days old. Not live TikTok data.`
+      : 'Data coverage is current.';
+
+    const m = h.model || {};
+    const mb = $('modelBadge');
+    if (m.available){
+      mb.innerHTML = `<span class="dot" style="background:var(--good)"></span>
+        <span>${esc(m.model_name || 'model')}</span>`;
+      mb.title = `run ${m.run_id} · trained ${m.trained_at || 'unknown'}`;
+    } else {
+      mb.className = 'badge unavailable';
+      mb.innerHTML = `<span class="dot"></span><span>no model</span>`;
+      mb.title = 'No trained model. Run scripts/train.py';
+    }
+  } catch (e) {
+    $('modeBadge').className = 'badge unavailable';
+    $('modeBadge').innerHTML = `<span class="dot"></span><span>API offline</span>`;
+    $('modeBadge').title = e.message;
+  }
+}
+
+/* ---------------- overview ---------------- */
+async function loadOverview(){
+  const kpis = $('kpis');
+  loading(kpis);
+  try {
+    const o = await api('/analytics/overview');
+    if (!o.available){
+      emptyState(kpis, 'No sample data', o.message || 'Run scripts/build_sample.py to ingest a sample.');
+      emptyState($('monthly'), 'Nothing to plot', 'No data ingested.');
+      emptyState($('duration'), 'Nothing to plot', 'No data ingested.');
+      emptyState($('hours'), 'Nothing to plot', 'No data ingested.');
+      return;
+    }
+    const cards = [
+      ['Videos analysed', compact(o.estimated_population_rows || o.rows),
+       o.sampling_is_uniform === false
+         ? `${fmt(o.rows)} rows sampled · population estimate`
+         : `${fmt(o.rows)} rows`],
+      ['Median views', compact(o.median_views), 'p50 of observed snapshot'],
+      ['p99 views', compact(o.p99_views), 'cohort virality threshold scale'],
+      ['Countries', fmt(o.countries), `${fmt(o.languages)} languages · ${compact(o.sounds)} sounds`],
+    ];
+    kpis.innerHTML = cards.map(([label,val,sub]) => `
+      <div class="card"><div class="kpi">${esc(val)}</div>
+      <div class="kpi-label">${esc(label)}</div>
+      <div class="kpi-label" style="color:var(--dim);margin-top:6px">${esc(sub)}</div></div>`).join('');
+
+    const maxV = Math.max(...o.monthly.map(m => m.videos));
+    $('monthly').innerHTML = `<table><thead><tr><th>Month</th><th class="num">Videos (est.)</th>
+      <th class="num">Median views</th><th class="num">p99 views</th></tr></thead><tbody>
+      ${o.monthly.map(m => `<tr><td>${esc(m.month)}</td>
+        <td class="num">${fmt(m.videos_estimated ?? m.videos)}</td>
+        <td class="num">${fmt(m.median_views)}</td>
+        <td class="num">${fmt(m.p99_views)}</td></tr>`).join('')}
+      </tbody></table>
+      <div class="note">Coverage window: ${esc(o.min_posted_at?.slice(0,10))} → ${esc(o.max_posted_at?.slice(0,10))}.
+      ${o.pct_zero_views}% of videos have zero observed views.
+      ${o.sampling_is_uniform === false ? "Counts are population estimates scaled by each file's sampling fraction." : ''}</div>`;
+
+    const c = await api('/analytics/content');
+    if (c.available){
+      const maxMed = Math.max(...c.duration_buckets.map(b => b.median_views), 1);
+      $('duration').innerHTML = `<table><thead><tr><th>Duration</th><th class="num">Videos</th>
+        <th class="num">Median views</th><th style="width:90px"></th></tr></thead><tbody>
+        ${c.duration_buckets.map(b => `<tr><td>${esc(b.bucket)}</td>
+          <td class="num">${compact(b.videos)}</td><td class="num">${fmt(b.median_views)}</td>
+          <td><div class="bar"><i style="width:${(b.median_views/maxMed*100).toFixed(1)}%"></i></div></td>
+          </tr>`).join('')}</tbody></table>`;
+
+      const maxH = Math.max(...c.hour_utc.map(h => h.median_views), 1);
+      // Pixel heights rather than percentages: a percentage height inside a flex
+      // item without an explicit height resolves to zero.
+      $('hours').innerHTML = `<div style="display:flex;align-items:flex-end;gap:4px;margin-top:8px">
+        ${c.hour_utc.map(h => {
+          const px = Math.max(2, Math.round(h.median_views / maxH * 110));
+          return `<div style="flex:1;text-align:center" title="${h.hour}:00 UTC — median ${fmt(h.median_views)} views">
+            <div style="height:${px}px;background:linear-gradient(180deg,var(--accent),var(--accent-2));border-radius:3px 3px 0 0"></div>
+            <div style="font-size:9px;color:var(--dim);margin-top:4px">${h.hour}</div></div>`;
+        }).join('')}
+      </div><div class="note">Bar height is median views for videos published in that UTC hour. Tallest bar = ${compact(maxH)} views.</div>`;
+    } else {
+      emptyState($('duration'), 'No content analytics', 'Sample data unavailable.');
+      emptyState($('hours'), 'No content analytics', 'Sample data unavailable.');
+    }
+  } catch (e) {
+    errorState(kpis, e);
+    errorState($('monthly'), e);
+  }
+}
+
+/* ---------------- predict ---------------- */
+$('predictBtn').onclick = async () => {
+  const btn = $('predictBtn');
+  btn.disabled = true; btn.textContent = 'Scoring…';
+  const payload = {
+    caption: $('p_caption').value,
+    hashtags: $('p_hashtags').value.split(',').map(s => s.trim().replace(/^#/,'')).filter(Boolean),
+    duration_ms: Math.round(Number($('p_duration').value || 0) * 1000),
+    country: $('p_country').value || null,
+    language: $('p_language').value || null,
+    type: $('p_type').value,
+  };
+  const sound = $('p_sound').value.trim();
+  if (sound) payload.sound_id = Number(sound);
+
+  try {
+    const r = await api('/predictions/prepublish', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    renderResult(r);
+    loadHistory();
+  } catch (e) {
+    $('resultEmpty').classList.add('hide');
+    const box = $('resultBody');
+    box.classList.remove('hide');
+    if (e.status === 503){
+      emptyState(box, 'No model trained', 'Train a model with scripts/train.py, then retry.');
+    } else {
+      errorState(box, e);
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = 'Predict virality';
+  }
+};
+
+function renderResult(r){
+  $('resultEmpty').classList.add('hide');
+  const box = $('resultBody');
+  box.classList.remove('hide');
+
+  const p = r.viral_probability;
+  const color = p >= 0.6 ? 'var(--good)' : p >= 0.4 ? 'var(--warn)' : 'var(--bad)';
+  const tier = (r.virality_tier || '').replace(/_/g,' ');
+
+  const drivers = r.drivers || {};
+  const driverHtml = (drivers.top || []).length
+    ? `<table><thead><tr><th>Feature</th><th class="num">Contribution</th></tr></thead><tbody>
+        ${drivers.top.map(d => `<tr>
+          <td>${esc(d.feature)} <span class="tag ${d.direction==='increases'?'pos':'neg'}">${esc(d.direction)}</span></td>
+          <td class="num" style="color:${d.contribution>0?'var(--good)':'var(--bad)'}">
+            ${d.contribution>0?'+':''}${Number(d.contribution).toFixed(4)}</td></tr>`).join('')}
+       </tbody></table>
+       <div class="note">Attribution describes model behaviour, not causal effect on virality.</div>`
+    : `<div class="note">${esc(drivers.note || 'Attribution unavailable for this model.')}</div>`;
+
+  const ev = r.expected_views;
+  const evHtml = ev
+    ? `<div class="grid g3" style="gap:8px;margin-top:4px">
+        <div><div class="kpi sm">${compact(ev.p10)}</div><div class="kpi-label">p10 views</div></div>
+        <div><div class="kpi sm">${compact(ev.p50)}</div><div class="kpi-label">median views</div></div>
+        <div><div class="kpi sm">${compact(ev.p90)}</div><div class="kpi-label">p90 views</div></div>
+       </div><div class="note">Observed views for videos landing in the same validation score band (n=${fmt(ev.band_n)}).</div>`
+    : `<div class="note">No calibrated view range available for this score band.</div>`;
+
+  // Fields the caller left empty are defaulted, which weakens the score. Say so
+  // rather than presenting an unqualified number.
+  const warnHtml = (r.input_warnings || []).length
+    ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+         <strong>Incomplete input (${r.input_warnings.length}):</strong>
+         ${r.input_warnings.map(esc).join("; ")}.
+       </div>`
+    : '';
+
+  box.innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <div class="prob" style="color:${color}">${(p*100).toFixed(1)}%</div>
+      <div><div style="font-weight:600">${esc(tier)}</div>
+      <div class="kpi-label">${esc(r.tier_description || '')}</div></div>
+    </div>
+    <div class="bar" style="margin-top:12px"><i style="width:${(p*100).toFixed(1)}%;background:${color}"></i></div>
+    <div class="meter"><span>predicted percentile: ${r.predicted_percentile == null ? '—' : r.predicted_percentile.toFixed(1)}</span>
+      <span>threshold: ${fmt(r.decision_threshold_views)} views</span></div>
+    ${warnHtml}
+
+    <h3 style="margin-top:20px">Expected reach</h3>${evHtml}
+
+    <h3 style="margin-top:20px">Why this score</h3>${driverHtml}
+
+    <h3 style="margin-top:20px">Model &amp; limits</h3>
+    <table><tbody>
+      <tr><td>Model version</td><td class="num" style="font-size:11px">${esc(r.model?.version)}</td></tr>
+      <tr><td>Label</td><td style="font-size:11px;text-align:right">${esc(r.label_definition)}</td></tr>
+      <tr><td>Prediction ID</td><td class="num" style="font-size:10px">${esc((r.prediction_id||'').slice(0,18))}</td></tr>
+    </tbody></table>
+    <ul style="font-size:11.5px;color:var(--dim);padding-left:16px;margin-top:10px">
+      ${(r.limitations||[]).map(l => `<li>${esc(l)}</li>`).join('')}
+    </ul>`;
+}
+
+async function loadHistory(){
+  const el = $('history');
+  loading(el);
+  try {
+    const h = await api('/predictions/history?limit=8');
+    if (!h.items.length){ emptyState(el, 'No predictions stored', 'Submitted predictions will appear here.'); return; }
+    el.innerHTML = `<table><thead><tr><th>When</th><th>Task</th><th class="num">Probability</th>
+      <th>Tier</th><th>Model</th></tr></thead><tbody>
+      ${h.items.map(i => `<tr>
+        <td>${esc((i.created_at||'').slice(0,16).replace('T',' '))}</td>
+        <td>${esc(i.task)}</td>
+        <td class="num">${(Number(i.viral_probability)*100).toFixed(1)}%</td>
+        <td><span class="tag">${esc(i.virality_tier||'')}</span></td>
+        <td style="font-size:10.5px;color:var(--dim)">${esc((i.model_version||'').split('@')[0])}</td>
+      </tr>`).join('')}</tbody></table>
+      <div class="note">${fmt(h.stats.total_predictions)} predictions stored · ${fmt(h.stats.observations_recorded)} outcome observations recorded.</div>`;
+  } catch(e){ errorState(el, e); }
+}
+
+/* ---------------- trends ---------------- */
+async function loadTrends(){
+  window._trendsLoaded = true;
+  const w = $('trendWindow'); loading(w);
+  try {
+    const t = await api('/trends?limit=12');
+    if (!t.available){ emptyState(w, 'No trend data', 'Sample data unavailable.'); return; }
+    w.innerHTML = `<div style="text-align:left">
+      <div class="kpi sm">${esc((t.window.start||'').slice(0,10))} → ${esc((t.window.end||'').slice(0,10))}</div>
+      <div class="note">${esc(t.window.acceleration_note)}</div>
+      ${t.caveat ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">${esc(t.caveat)}</div>` : ''}
+    </div>`;
+
+    const accelCell = (v) => v == null
+      ? `<span class="tag">new</span>`
+      : `<span class="num" style="color:${v>1.5?'var(--good)':'var(--muted)'}">${v.toFixed(2)}×</span>`;
+
+    $('trendTags').innerHTML = t.accelerating_hashtags.length
+      ? `<table><thead><tr><th>Hashtag</th><th class="num">Uses</th><th class="num">Last 7d</th><th class="num">Accel.</th></tr></thead><tbody>
+        ${t.accelerating_hashtags.map(h => `<tr><td>#${esc(h.hashtag)}
+          ${h.pattern==='emerging'?'<span class="tag">emerging</span>':''}</td>
+          <td class="num">${compact(h.uses)}</td><td class="num">${compact(h.uses_last_7d)}</td>
+          <td style="text-align:right">${accelCell(h.acceleration)}</td></tr>`).join('')}
+        </tbody></table>`
+      : `<div class="state">No hashtags met the minimum usage threshold.</div>`;
+
+    $('trendSounds').innerHTML = t.accelerating_sounds.length
+      ? `<table><thead><tr><th>Sound ID</th><th class="num">Videos</th><th class="num">Last 7d</th><th class="num">Accel.</th></tr></thead><tbody>
+        ${t.accelerating_sounds.map(s => `<tr><td style="font-family:var(--mono);font-size:11px">${esc(s.sound_id)}
+          ${s.pattern==='emerging'?'<span class="tag">emerging</span>':''}</td>
+          <td class="num">${compact(s.videos)}</td><td class="num">${compact(s.videos_last_7d)}</td>
+          <td style="text-align:right">${accelCell(s.acceleration)}</td></tr>`).join('')}
+        </tbody></table>`
+      : `<div class="state">No sounds met the minimum usage threshold.</div>`;
+  } catch(e){ errorState(w, e); }
+}
+
+/* ---------------- models ---------------- */
+async function loadModels(){
+  window._modelsLoaded = true;
+  const el = $('modelTable'); loading(el);
+  try {
+    const e = await api('/models/evaluation');
+    const rows = e.comparison || [];
+    if (!rows.length){ emptyState(el, 'No evaluation results', 'Train a model first.'); return; }
+
+    const k = Object.keys((rows[0].test?.ranking) || {})[0];
+    el.innerHTML = `<table><thead><tr><th>Model</th><th class="num">PR-AUC</th>
+      <th class="num">95% CI</th><th class="num">ROC-AUC</th>
+      <th class="num">Precision@${esc((k||'k=1000').split('=')[1])}</th>
+      <th class="num">Lift</th><th class="num">Brier</th><th class="num">ECE</th></tr></thead><tbody>
+      ${rows.map(r => {
+        const t = r.test || {};
+        const ci = r.test_pr_auc_ci || {};
+        const rank = (t.ranking || {})[k] || {};
+        const isChamp = r.model === e.champion;
+        return `<tr style="${isChamp?'background:#0f1a24':''}">
+          <td>${esc(r.model)} ${isChamp?'<span class="tag pos">champion</span>':''}
+            ${r.error?`<span class="tag neg">error</span>`:''}</td>
+          <td class="num">${t.pr_auc == null ? '—' : t.pr_auc.toFixed(4)}</td>
+          <td class="num" style="font-size:10.5px;color:var(--dim)">
+            ${ci.lower==null?'—':`${ci.lower.toFixed(3)}–${ci.upper.toFixed(3)}`}</td>
+          <td class="num">${t.roc_auc == null ? '—' : t.roc_auc.toFixed(4)}</td>
+          <td class="num">${rank.precision_at_k == null ? '—' : pct(rank.precision_at_k, 2)}</td>
+          <td class="num">${rank.lift_at_k == null ? '—' : rank.lift_at_k.toFixed(2)+'×'}</td>
+          <td class="num">${t.brier == null ? '—' : t.brier.toFixed(4)}</td>
+          <td class="num">${t.ece_10 == null ? '—' : t.ece_10.toFixed(4)}</td>
+        </tr>`;}).join('')}
+      </tbody></table>
+      <div class="note">
+        Test prevalence ${pct(rows[0]?.test?.prevalence, 2)} · n=${fmt(rows[0]?.test?.n)} ·
+        run <span class="tag">${esc(e.run_id)}</span> ·
+        ${esc(e.protocol_note)}
+      </div>
+      ${e.selection_note ? `<div class="note" style="border-color:var(--warn);color:var(--warn)">
+        <strong>Model choice trade-off:</strong> ${esc(e.selection_note)}</div>` : ''}`;
+
+    const imp = (e.feature_importance || {})[e.champion] || [];
+    $('importance').innerHTML = imp.length
+      ? `<table><tbody>${imp.slice(0,14).map(f => `<tr>
+          <td>${esc(f.feature)}</td>
+          <td style="width:45%"><div class="bar"><i style="width:${(f.importance/Math.max(...imp.map(x=>x.importance))*100).toFixed(1)}%"></i></div></td>
+          <td class="num" style="width:60px">${f.importance.toFixed(4)}</td></tr>`).join('')}</tbody></table>`
+      : `<div class="state">No importance recorded for this model type.</div>`;
+
+    const lab = e.label_definition || {};
+    const diag = (e.label_diagnostics || {}).train || {};
+    $('labelDef').innerHTML = `<table><tbody>
+      <tr><td>Percentile</td><td class="num">${((lab.percentile||0)*100).toFixed(1)}%</td></tr>
+      <tr><td>Peer group</td><td class="num">${esc((lab.keys||[]).join(' × '))}</td></tr>
+      <tr><td>Global threshold</td><td class="num">${fmt(Math.round(lab.global_threshold||0))} views</td></tr>
+      <tr><td>Cohort thresholds</td><td class="num">${fmt(lab.cohort_count)}</td></tr>
+      <tr><td>Train rows</td><td class="num">${fmt(diag.rows)}</td></tr>
+      <tr><td>Excluded (bad clock)</td><td class="num">${diag.pct_excluded_invalid_clock ?? '—'}%</td></tr>
+      <tr><td>Prevalence</td><td class="num">${pct(diag.prevalence_valid, 3)}</td></tr>
+      <tr><td>Fixed-age labels</td><td class="num" style="color:var(--warn)">unavailable</td></tr>
+    </tbody></table>
+    <div class="note">${esc(diag.fixed_age_label_reason || '')}</div>`;
+  } catch(e){
+    if (e.status === 503) emptyState(el, 'No model registry', 'Train a model with scripts/train.py.');
+    else errorState(el, e);
+  }
+}
+
+/* ---------------- data ---------------- */
+async function loadData(){
+  window._dataLoaded = true;
+  const f = $('freshness'), q = $('quality'), s = $('source');
+  loading(f); loading(q); loading(s);
+  try {
+    const d = await api('/data/status');
+    f.innerHTML = `<table><tbody>
+      <tr><td>Operating mode</td><td class="num"><span class="badge ${esc(d.mode)}"><span class="dot"></span>${esc(d.mode)}</span></td></tr>
+      <tr><td>Latest publication</td><td class="num" style="font-size:11px">${esc((d.latest_posted_at||'—').slice(0,19))}</td></tr>
+      <tr><td>Latest stat reading</td><td class="num" style="font-size:11px">${esc((d.latest_stats_updated_at||'—').slice(0,19))}</td></tr>
+      <tr><td>Publication delay</td><td class="num">${d.publication_delay_days ?? '—'} days</td></tr>
+      <tr><td>Last ingestion</td><td class="num" style="font-size:11px">${esc((d.last_ingestion_at||'—').slice(0,19))}</td></tr>
+      <tr><td>Active model</td><td class="num" style="font-size:11px">${esc(d.model?.model_name || 'none')}</td></tr>
+    </tbody></table><div class="note">${esc(d.mode_explanation)}</div>`;
+
+    const dq = d.data_quality || {};
+    q.innerHTML = `<table><tbody>
+      <tr><td>Negative observation age</td><td class="num" style="color:var(--bad)">${dq.pct_negative_observation_age ?? '—'}%</td></tr>
+      <tr><td>Fixed-age labels supported</td>
+        <td class="num" style="color:${dq.fixed_age_label_supported?'var(--good)':'var(--bad)'}">
+          ${dq.fixed_age_label_supported === null ? '—' : (dq.fixed_age_label_supported ? 'yes' : 'no')}</td></tr>
+      <tr><td>Distinct stat timestamps</td><td class="num">${fmt(dq.distinct_stats_timestamps)}</td></tr>
+    </tbody></table>
+    <div class="note">Engagement counters recorded before a video was published cannot be a valid
+    observation. Rows with an invalid clock are excluded from label construction rather than repaired.</div>`;
+
+    const src = d.source || {};
+    s.innerHTML = `<table><tbody>
+      <tr><td>Source</td><td class="num">${esc(src.repo_id || src.name || '—')}</td></tr>
+      <tr><td>Licence</td><td class="num">${esc(src.license || '—')}</td></tr>
+      <tr><td>Partitions</td><td class="num">${fmt(src.partition_count)}</td></tr>
+      <tr><td>Total size</td><td class="num">${src.total_gb ? src.total_gb + ' GB' : '—'}</td></tr>
+      <tr><td>Latest partition</td><td class="num">${esc(src.latest_partition || '—')}</td></tr>
+      <tr><td>Sample files</td><td class="num" style="font-size:11px">${(d.sample?.files||[]).map(esc).join('<br>') || 'none'}</td></tr>
+    </tbody></table>`;
+  } catch(e){ errorState(f, e); errorState(q, e); errorState(s, e); }
+}
+
+/* ---------------- boot ---------------- */
+loadHeader();
+loadOverview();
+activateTab(location.hash.slice(1) || 'overview');
+setInterval(loadHeader, 60000);
+</script>
+</body>
+</html>

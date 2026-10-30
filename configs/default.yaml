@@ -1,0 +1,27 @@
+# ViralIQ runtime configuration
+# Paths are resolved relative to the project root by src/common/config.py.
+
+source:
+  repo_id: datasocial/tiktok-5.6B-videos
+  revision: main
+  data_prefix: data
+  license: CC BY-NC 4.0
+
+labels:
+  # Cohort-relative virality: top 1% of observed views within the peer group.
+  percentile: 0.99
+  # Age bucket is part of the peer group so that a 3-hour-old snapshot is never
+  # ranked against a 20-day-old one.
+  cohort_keys: [country, type, observation_age_bucket]
+  min_cohort_size: 200
+  # Observation-clock validity window (hours between publication and stat read).
+  min_observation_age_hours: 0.0
+  max_observation_age_hours: 720.0
+
+model:
+  random_state: 42
+  # K must be large enough that Precision@K is not decided by a handful of hits.
+  top_k_values: [1000, 5000, 20000]
+  bootstrap_iterations: 200
+# Split boundaries are derived from the calendar (train = M, val/test = halves of
+# M+1, recent = M+2) and are intentionally not configurable here.

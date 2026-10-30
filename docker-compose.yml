@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      VIRALIQ_LOG_LEVEL: INFO
+    volumes:
+      # Data and model artefacts stay on the host: they are large and must not be
+      # baked into the image.
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./reports:/app/reports
+      - ./database:/app/database
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
