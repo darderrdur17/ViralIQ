@@ -101,7 +101,9 @@ def model_evaluation(run_id: str | None = None) -> dict:
     # The champion is chosen on PR-AUC, but Precision@K is the operational metric a
     # content team actually acts on. When a different model wins there, say so rather
     # than letting the UI imply the champion is best at everything.
-    selection_note = _selection_note(comparison, registry.get("active_model"))
+    selection_note = _selection_note(
+        comparison, registry.get("active_model"), registry.get("champion_pinned")
+    )
 
     return {
         "run_id": run_id,
@@ -127,10 +129,44 @@ def model_evaluation(run_id: str | None = None) -> dict:
     }
 
 
-def _selection_note(comparison: list[dict], champion: str | None) -> str | None:
-    """Flag when the champion is not the best model at the operating cutoff."""
+def _selection_note(
+    comparison: list[dict], champion: str | None, pinned: dict | None = None
+) -> str | None:
+    """Explain any case where the champion is not the obvious best model.
+
+    Two situations produce a note: the champion was deliberately pinned (the demo
+    mirrors the deployed linear configuration, which the fixture's own winner may not
+    be), or another model wins at the operating cutoff despite losing on PR-AUC.
+    Silently showing a champion that contradicts the benchmark would be the exact
+    failure this project is built to avoid.
+    """
     if not champion:
         return None
+
+    champion_row = next((r for r in comparison if r["model"] == champion), None)
+    if champion_row is None:
+        return None
+
+    champion_pr = (champion_row.get("test") or {}).get("pr_auc")
+    pr_leader = max(
+        (r for r in comparison if (r.get("test") or {}).get("pr_auc") is not None),
+        key=lambda r: r["test"]["pr_auc"],
+        default=None,
+    )
+    if pr_leader and pr_leader["model"] != champion and champion_pr is not None:
+        if pr_leader["test"]["pr_auc"] > champion_pr:
+            reason = (
+                " This run's champion was pinned deliberately."
+                if pinned and pinned.get("model") == champion
+                else ""
+            )
+            detail = f" {pinned.get('reason')}." if pinned and pinned.get("reason") else ""
+            return (
+                f"{pr_leader['model']} scores higher on PR-AUC "
+                f"({pr_leader['test']['pr_auc']:.4f} vs {champion_pr:.4f}) but {champion} is "
+                f"reported as champion.{reason}{detail}"
+            )
+
     key = None
     for row in comparison:
         ranking = (row.get("test") or {}).get("ranking") or {}
@@ -143,9 +179,6 @@ def _selection_note(comparison: list[dict], champion: str | None) -> str | None:
     def precision(row: dict) -> float:
         return ((row.get("test") or {}).get("ranking") or {}).get(key, {}).get("precision_at_k") or 0.0
 
-    champion_row = next((r for r in comparison if r["model"] == champion), None)
-    if champion_row is None:
-        return None
     best = max(comparison, key=precision)
     if best["model"] == champion or precision(best) <= precision(champion_row):
         return None

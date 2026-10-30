@@ -23,6 +23,26 @@ uvicorn api.main:app --port 8000
   it are **not** the numbers quoted in the main README. Those come from a 300,000-row training
   window across three months.
 
+## The demo is pinned to the linear champion
+
+`scripts/seed_demo.py` trains all four model families but pins the active model to
+`E1_logistic_regression`, and says so in the console output:
+
+```
+  champion E1_logistic_regression
+           (pinned; the fixture's own PR-AUC winner was E2_random_forest)
+```
+
+This is deliberate. The platform ships a linear champion because the serverless deployment exports
+an **affine** surrogate of it, and an affine surrogate cannot represent a forest. On a 20k slice a
+random forest can win on PR-AUC, so without pinning the demo would exercise an inference path the
+real deployment never uses — and CI's portable-parity tests would skip rather than verify it.
+
+The Model Laboratory reports this rather than hiding it: the `selection_note` field states which
+model actually scored higher and why the champion was pinned anyway.
+
+Override with `--champion <name>` if you want the fixture's natural winner.
+
 ## Provenance
 
 | | |

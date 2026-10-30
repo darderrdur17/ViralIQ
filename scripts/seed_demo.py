@@ -36,6 +36,12 @@ FIXTURE = SETTINGS.paths.root / "data" / "fixtures" / "demo_sample.parquet"
 def main() -> int:
     parser = argparse.ArgumentParser(description="Seed a demo dataset and model")
     parser.add_argument("--rows", type=int, default=20_000, help="Training row cap")
+    parser.add_argument(
+        "--champion",
+        default="E1_logistic_regression",
+        help="Model to pin as active. Defaults to the linear champion the platform "
+             "actually deploys, so the demo exercises the same inference path.",
+    )
     parser.add_argument("--force", action="store_true", help="Re-seed over an existing demo")
     args = parser.parse_args()
 
@@ -94,12 +100,51 @@ def main() -> int:
     )
     write_reports(SETTINGS.paths.model_registry / run.run_id / "run.json")
 
+    # Pin the champion. The demo exists to mirror the product, and the product ships a
+    # linear model because the serverless deployment exports an affine surrogate of it.
+    # On a 20k slice a forest can win on PR-AUC, which would leave the demo — and CI's
+    # parity tests — exercising a path the real deployment never uses.
+    registry_path = SETTINGS.paths.model_registry / "index.json"
+    registry = json.loads(registry_path.read_text(encoding="utf-8"))
+    fixture_winner = registry.get("active_model")
+    pinned = args.champion
+    if pinned and pinned != fixture_winner:
+        if not (SETTINGS.paths.model_registry / run.run_id / f"{pinned}.bin").exists():
+            log.warning("cannot pin %s: it was not trained in this run", pinned)
+        else:
+            registry["active_model"] = pinned
+            # Record why, so the Model Laboratory can explain a champion that does not
+            # top the PR-AUC table rather than quietly contradicting it.
+            registry["champion_pinned"] = {
+                "model": pinned,
+                "fixture_winner": fixture_winner,
+                "reason": (
+                    "This demo is pinned to the linear champion the platform actually "
+                    "deploys, because the serverless export requires an affine model"
+                ),
+            }
+            registry_path.write_text(json.dumps(registry, indent=2), encoding="utf-8")
+            log.info(
+                "pinned champion %s (fixture winner was %s) so the demo matches the "
+                "deployed linear configuration",
+                pinned,
+                fixture_winner,
+            )
+
+    elif "champion_pinned" in registry:
+        registry.pop("champion_pinned", None)
+        registry_path.write_text(json.dumps(registry, indent=2), encoding="utf-8")
+
+    active_model = json.loads(registry_path.read_text())["active_model"]
+
     print()
     print("=" * 68)
     print("Demo seeded.")
     print(f"  run      {run.run_id}")
     print(f"  rows     {run.splits.get('train', {}).get('rows', 0):,} train")
-    print(f"  champion {json.loads((SETTINGS.paths.model_registry / 'index.json').read_text())['active_model']}")
+    print(f"  champion {active_model}")
+    if pinned and pinned != fixture_winner:
+        print(f"           (pinned; the fixture's own PR-AUC winner was {fixture_winner})")
     print()
     print("  uvicorn api.main:app --port 8000")
     print("  open    http://localhost:8000/app/")
