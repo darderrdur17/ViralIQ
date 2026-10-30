@@ -271,8 +271,8 @@ median — which improved the champion's PR-AUC from 0.0265 to 0.0318.
 
 ## Quick start
 
-> The repository is **private** — you need access before the clone below will work.
-> Everything else in this section runs without any credentials.
+> Everything in this section runs without any credentials. The only optional integrations —
+> the TikTok Research API and any licensed data feed — require approvals you must obtain yourself.
 
 ```bash
 git clone https://github.com/darderrdur17/ViralIQ.git
