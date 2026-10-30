@@ -94,7 +94,12 @@ def test_global_importance_works_for_linear_pipeline():
     ranked = global_importance(pipe)
     assert ranked, "linear pipeline must yield global importance"
     assert all("feature" in r and "importance" in r for r in ranked)
-    assert sum(r["importance"] for r in ranked) == pytest.approx(1.0, abs=1e-6)
+    assert all(0.0 <= r["importance"] <= 1.0 for r in ranked), "importances must be normalised"
+
+    # Values are rounded to 5 decimal places for presentation, so the sum can drift by
+    # up to n_features * 5e-6. Asserting 1e-6 made this test fail in CI while passing
+    # locally, purely on rounding.
+    assert sum(r["importance"] for r in ranked) == pytest.approx(1.0, abs=1e-3)
 
 
 def test_local_attributions_aggregate_to_input_space():
