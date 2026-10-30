@@ -50,6 +50,37 @@ scored using last month's popularity.
 This is a genuine limitation, not a bug: using present-day popularity to score a video published
 last month would be leakage.
 
+## 5a. Sound features do not survive a month boundary
+
+Sound popularity is the top feature for CatBoost and LightGBM by importance, which makes this the
+most consequential limitation in the project.
+
+Measured across the shipped split (train = 2026-09, test = 2026-10):
+
+| | |
+|---|---:|
+| Distinct sounds in the training month | 303,974 |
+| Test rows carrying a sound | 199,998 |
+| **Test rows whose sound never appeared in training** | **160,237 (80.1%)** |
+
+Four out of five videos in the next month use a sound the model has never seen. Those rows receive
+`NULL` sound features, which the encoder imputes to the training median — so the model treats them
+as *average* sounds and falls back on country, language, format, duration and timing.
+
+Two consequences:
+
+1. **Feature importance overstates the forward value of sound.** Importance is computed on the
+   fitted model over the training distribution, where sounds are known. On a later month, the
+   feature is largely absent. A high training-time ranking for `sound_train_median_views_log` is
+   therefore a statement about the past, not a promise about next month.
+2. **Sound-based signal is only viable at a short horizon.** Exploiting a trending sound requires
+   training data from days earlier, not weeks. The source dataset lags by ~27 days, so by the time
+   a sound's popularity is in the training window, the sound has already turned over.
+
+This is a property of TikTok, not a defect in the pipeline: sound turnover is roughly monthly. It
+is the clearest argument for the repeated-observation pipeline described in §12 — a weekly re-crawl
+would keep sound statistics current, which the monthly snapshot cannot.
+
 ## 6. Historical-data mode
 
 Publication coverage in the audited partitions lags the audit clock by weeks. The platform

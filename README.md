@@ -433,8 +433,10 @@ Beyond unit tests:
 - **No creator signal.** Follower counts are absent from the dataset and are not invented. This is
   probably the largest missing predictor.
 - **No visual or audio content.** The dataset carries metadata, not media.
-- **Sound features decay.** Frozen at the training window by necessity — using present-day
-  popularity to score a past video would be leakage.
+- **Sound features decay faster than the data refreshes.** Frozen at the training window by
+  necessity — using present-day popularity to score a past video would be leakage. Measured:
+  **80.1%** of next-month videos use a sound never seen in training, so the strongest feature is
+  absent for four rows in five.
 - **Historical-data mode.** Measured publication coverage lags the audit clock by **26.9 days**;
   the app reports this rather than presenting stale data as live.
 - **One forward holdout.** Drift is tested against a single month boundary, so drift conclusions
