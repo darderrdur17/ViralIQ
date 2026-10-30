@@ -1,0 +1,835 @@
+{
+  "run_id": "20261030T103039_primary_ef7c86",
+  "started_at": "2026-10-30T10:34:12.868590+00:00",
+  "duration_seconds": 219.2,
+  "sample_files": [
+    "r__2026-10.parquet",
+    "s__2026-09.parquet"
+  ],
+  "splits": {
+    "train": {
+      "rows": 300000,
+      "min_posted_at": "2026-09-01 00:00:00+00:00",
+      "max_posted_at": "2026-09-30 23:59:57+00:00"
+    },
+    "val": {
+      "rows": 200002,
+      "min_posted_at": "2026-10-01 00:00:00+00:00",
+      "max_posted_at": "2026-10-01 14:38:07+00:00"
+    },
+    "test": {
+      "rows": 199998,
+      "min_posted_at": "2026-10-01 14:38:08+00:00",
+      "max_posted_at": "2026-10-03 13:00:00+00:00"
+    },
+    "recent": {
+      "rows": 0,
+      "min_posted_at": null,
+      "max_posted_at": null
+    }
+  },
+  "label_definition": {
+    "percentile": 0.99,
+    "keys": [
+      "country",
+      "type",
+      "observation_age_bucket"
+    ],
+    "global_threshold": 258801.0,
+    "cohort_count": 130,
+    "fitted_on_rows": 282982,
+    "fitted_on_months": [
+      "2026-09"
+    ],
+    "thresholds": {
+      "ES|video|7-30d": 1089680.0,
+      "BF|video|7-30d": 255763.0,
+      "KE|video|7-30d": 195967.0,
+      "EC|video|7-30d": 314366.0,
+      "US|photo|3-7d": 12299.0,
+      "SN|video|7-30d": 356139.0,
+      "MY|video|7-30d": 261412.0,
+      "KH|video|7-30d": 222206.0,
+      "BR|video|3-7d": 482475.0,
+      "PK|photo|7-30d": 21009.0,
+      "DE|photo|7-30d": 299795.0,
+      "PH|video|7-30d": 246795.0,
+      "GB|video|7-30d": 653955.0,
+      "DE|video|3-7d": 317331.0,
+      "MX|video|1-3d": 281896.0,
+      "JP|video|7-30d": 1860354.0,
+      "EG|video|7-30d": 1209077.0,
+      "IT|video|3-7d": 654263.0,
+      "SG|video|7-30d": 276931.0,
+      "NL|video|3-7d": 263390.0,
+      "MY|video|3-7d": 242370.0,
+      "US|photo|0-6h": 5149.0,
+      "ID|video|6-24h": 32908.0,
+      "PK|video|3-7d": 180120.0,
+      "SA|photo|7-30d": 272635.0,
+      "UA|video|7-30d": 557774.0,
+      "US|video|1-3d": 47624.0,
+      "LK|video|7-30d": 189615.0,
+      "GB|video|1-3d": 246708.0,
+      "NG|video|7-30d": 275608.0,
+      "MX|photo|7-30d": 167806.0,
+      "SD|video|7-30d": 445212.0,
+      "ID|video|3-7d": 276801.0,
+      "SN|video|3-7d": 213947.0,
+      "SE|video|7-30d": 691032.0,
+      "NG|photo|7-30d": 39804.0,
+      "CL|video|7-30d": 403505.0,
+      "ES|video|3-7d": 348565.0,
+      "ET|video|3-7d": 293205.0,
+      "US|photo|1-3d": 6411.0,
+      "DO|video|7-30d": 356742.0,
+      "MM|video|3-7d": 389186.0,
+      "SA|video|7-30d": 599042.0,
+      "BR|video|1-3d": 119730.0,
+      "DE|video|7-30d": 611280.0,
+      "NL|video|7-30d": 416618.0,
+      "UA|video|3-7d": 187068.0,
+      "US|photo|7-30d": 21757.0,
+      "ID|photo|3-7d": 438087.0,
+      "TH|video|3-7d": 321670.0,
+      "VE|video|7-30d": 455069.0,
+      "CI|video|7-30d": 165531.0,
+      "CD|video|7-30d": 116580.0,
+      "US|video|3-7d": 80662.0,
+      "CA|video|7-30d": 610083.0,
+      "EG|video|3-7d": 421947.0,
+      "MY|photo|7-30d": 113630.0,
+      "MY|video|1-3d": 50069.0,
+      "PE|video|3-7d": 581153.0,
+      "AE|video|7-30d": 564895.0,
+      "PH|video|3-7d": 187634.0,
+      "IT|video|7-30d": 637432.0,
+      "TN|video|7-30d": 266088.0,
+      "BD|video|3-7d": 367599.0,
+      "TH|video|7-30d": 352421.0,
+      "PE|video|7-30d": 663209.0,
+      "GH|video|7-30d": 284918.0,
+      "AU|video|7-30d": 777876.0,
+      "BR|video|7-30d": 762498.0,
+      "GH|video|3-7d": 220763.0,
+      "PK|video|1-3d": 194063.0,
+      "BD|video|7-30d": 1296535.0,
+      "NG|video|1-3d": 38495.0,
+      "VN|video|1-3d": 187515.0,
+      "SA|video|1-3d": 124979.0,
+      "ID|photo|7-30d": 125985.0,
+      "GB|photo|7-30d": 173562.0,
+      "PK|video|7-30d": 312960.0,
+      "ZA|video|3-7d": 195440.0,
+      "KR|video|7-30d": 688732.0,
+      "GB|video|3-7d": 301057.0,
+      "VN|video|7-30d": 723598.0,
+      "MM|video|7-30d": 321509.0,
+      "KH|video|3-7d": 219701.0,
+      "ML|video|7-30d": 184933.0,
+      "ZA|photo|7-30d": 91521.0,
+      "ID|video|7-30d": 424286.0,
+      "TR|video|3-7d": 406001.0,
+      "TH|photo|7-30d": 68883.0,
+      "FR|video|3-7d": 526088.0,
+      "AE|video|3-7d": 236661.0,
+      "AR|video|7-30d": 789789.0,
+      "NP|video|3-7d": 195412.0,
+      "MA|video|7-30d": 491502.0,
+      "US|video|0-6h": 4289.0,
+      "SA|video|3-7d": 495400.0,
+      "MX|video|7-30d": 1379589.0,
+      "US|video|6-24h": 9522.0,
+      "UG|video|7-30d": 223860.0,
+      "KZ|video|7-30d": 330823.0,
+      "TH|video|1-3d": 133532.0,
+      "ET|video|7-30d": 452357.0,
+      "US|video|7-30d": 151970.0,
+      "FR|photo|7-30d": 289279.0,
+      "PH|photo|7-30d": 95733.0,
+      "FR|video|7-30d": 1101525.0,
+      "CO|video|7-30d": 862633.0,
+      "BR|photo|7-30d": 82938.0,
+      "ZA|video|7-30d": 428426.0,
+      "VN|video|3-7d": 386651.0,
+      "DZ|video|7-30d": 416250.0,
+      "CA|video|3-7d": 522534.0,
+      "ID|video|1-3d": 146416.0,
+      "IQ|video|7-30d": 502356.0,
+      "TR|video|7-30d": 1602873.0,
+      "TZ|video|7-30d": 346717.0,
+      "US|photo|6-24h": 7557.0,
+      "PH|video|6-24h": 1909.0,
+      "CO|video|3-7d": 460326.0,
+      "NP|video|7-30d": 362044.0,
+      "MX|video|3-7d": 715061.0,
+      "BY|video|7-30d": 467569.0,
+      "PL|video|7-30d": 1037200.0,
+      "IQ|video|3-7d": 365525.0,
+      "PH|video|1-3d": 42520.0,
+      "GR|video|7-30d": 879476.0,
+      "NG|video|3-7d": 168424.0,
+      "KE|video|3-7d": 218875.0,
+      "VN|photo|7-30d": 163505.0,
+      "RO|video|7-30d": 588963.0
+    }
+  },
+  "label_diagnostics": {
+    "train": {
+      "rows": 300000,
+      "rows_observation_valid": 282982,
+      "rows_excluded_invalid_clock": 17018,
+      "pct_excluded_invalid_clock": 5.673,
+      "positives": 2940,
+      "prevalence_valid": 0.010389,
+      "prevalence_all_rows": 0.0098,
+      "fixed_age_labels_available": false,
+      "fixed_age_label_reason": "The source dataset stores a single engagement snapshot per video with no repeated observations. viral_24h and viral_7d are therefore NULL rather than estimated."
+    },
+    "val": {
+      "rows": 200002,
+      "rows_observation_valid": 144230,
+      "rows_excluded_invalid_clock": 55772,
+      "pct_excluded_invalid_clock": 27.886,
+      "positives": 2556,
+      "prevalence_valid": 0.017722,
+      "prevalence_all_rows": 0.01278,
+      "fixed_age_labels_available": false,
+      "fixed_age_label_reason": "The source dataset stores a single engagement snapshot per video with no repeated observations. viral_24h and viral_7d are therefore NULL rather than estimated."
+    },
+    "test": {
+      "rows": 199998,
+      "rows_observation_valid": 117039,
+      "rows_excluded_invalid_clock": 82959,
+      "pct_excluded_invalid_clock": 41.48,
+      "positives": 1637,
+      "prevalence_valid": 0.013987,
+      "prevalence_all_rows": 0.008185,
+      "fixed_age_labels_available": false,
+      "fixed_age_label_reason": "The source dataset stores a single engagement snapshot per video with no repeated observations. viral_24h and viral_7d are therefore NULL rather than estimated."
+    }
+  },
+  "champion": "E1_logistic_regression",
+  "selection_rule": "Champion is the highest test PR-AUC, breaking ties on Precision@K. PR-AUC is used because it summarises performance across the whole ranking.",
+  "selection_note": "E3_catboost has higher Precision@1000 (3.70% vs 2.50%) even though E1_logistic_regression wins on PR-AUC. If you act on a fixed-size shortlist, E3_catboost may be the better operational choice.",
+  "comparison": [
+    {
+      "model": "E1_logistic_regression",
+      "calibrated": true,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": 0.031754,
+        "roc_auc": 0.741924,
+        "brier": 0.013736,
+        "ece_10": 0.01039,
+        "ranking": {
+          "k=1000": {
+            "precision_at_k": 0.025,
+            "recall_at_k": 0.015272,
+            "lift_at_k": 1.7874
+          },
+          "k=5000": {
+            "precision_at_k": 0.0278,
+            "recall_at_k": 0.084911,
+            "lift_at_k": 1.9876
+          },
+          "k=20000": {
+            "precision_at_k": 0.03735,
+            "recall_at_k": 0.456323,
+            "lift_at_k": 2.6704
+          }
+        }
+      },
+      "test_pr_auc_ci": {
+        "point": 0.031754,
+        "lower": 0.029764,
+        "upper": 0.034996,
+        "iterations": 200
+      },
+      "recent": null,
+      "note": null,
+      "error": null
+    },
+    {
+      "model": "E3_catboost",
+      "calibrated": true,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": 0.024959,
+        "roc_auc": 0.685785,
+        "brier": 0.013798,
+        "ece_10": 0.008183,
+        "ranking": {
+          "k=1000": {
+            "precision_at_k": 0.037,
+            "recall_at_k": 0.022602,
+            "lift_at_k": 2.6454
+          },
+          "k=5000": {
+            "precision_at_k": 0.0256,
+            "recall_at_k": 0.078192,
+            "lift_at_k": 1.8303
+          },
+          "k=20000": {
+            "precision_at_k": 0.02845,
+            "recall_at_k": 0.347587,
+            "lift_at_k": 2.0341
+          }
+        }
+      },
+      "test_pr_auc_ci": {
+        "point": 0.024959,
+        "lower": 0.022965,
+        "upper": 0.027925,
+        "iterations": 200
+      },
+      "recent": null,
+      "note": null,
+      "error": null
+    },
+    {
+      "model": "E4_lightgbm",
+      "calibrated": true,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": 0.024133,
+        "roc_auc": 0.666677,
+        "brier": 0.013781,
+        "ece_10": 0.007611,
+        "ranking": {
+          "k=1000": {
+            "precision_at_k": 0.034,
+            "recall_at_k": 0.02077,
+            "lift_at_k": 2.4309
+          },
+          "k=5000": {
+            "precision_at_k": 0.026,
+            "recall_at_k": 0.079414,
+            "lift_at_k": 1.8589
+          },
+          "k=20000": {
+            "precision_at_k": 0.0278,
+            "recall_at_k": 0.339646,
+            "lift_at_k": 1.9876
+          }
+        }
+      },
+      "test_pr_auc_ci": {
+        "point": 0.024133,
+        "lower": 0.02249,
+        "upper": 0.026504,
+        "iterations": 200
+      },
+      "recent": null,
+      "note": null,
+      "error": null
+    },
+    {
+      "model": "E2_random_forest",
+      "calibrated": true,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": 0.023235,
+        "roc_auc": 0.655026,
+        "brier": 0.01384,
+        "ece_10": 0.005557,
+        "ranking": {
+          "k=1000": {
+            "precision_at_k": 0.027,
+            "recall_at_k": 0.016494,
+            "lift_at_k": 1.9304
+          },
+          "k=5000": {
+            "precision_at_k": 0.0254,
+            "recall_at_k": 0.077581,
+            "lift_at_k": 1.816
+          },
+          "k=20000": {
+            "precision_at_k": 0.02665,
+            "recall_at_k": 0.325596,
+            "lift_at_k": 1.9054
+          }
+        }
+      },
+      "test_pr_auc_ci": {
+        "point": 0.023235,
+        "lower": 0.021797,
+        "upper": 0.025771,
+        "iterations": 200
+      },
+      "recent": null,
+      "note": null,
+      "error": null
+    },
+    {
+      "model": "E0_random_ranking",
+      "calibrated": null,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": 0.01455,
+        "roc_auc": 0.516219,
+        "brier": 0.333451,
+        "ece_10": 0.486721,
+        "ranking": {
+          "k=1000": {
+            "precision_at_k": 0.012,
+            "recall_at_k": 0.00733,
+            "lift_at_k": 0.858
+          },
+          "k=5000": {
+            "precision_at_k": 0.015,
+            "recall_at_k": 0.045816,
+            "lift_at_k": 1.0724
+          },
+          "k=20000": {
+            "precision_at_k": 0.0148,
+            "recall_at_k": 0.180819,
+            "lift_at_k": 1.0581
+          }
+        }
+      },
+      "test_pr_auc_ci": null,
+      "recent": null,
+      "note": "Uniform random scores on the identical evaluation rows; the floor any model must clear.",
+      "error": null
+    },
+    {
+      "model": "E0_majority_prevalence",
+      "calibrated": null,
+      "test": {
+        "n": 117039,
+        "prevalence": 0.013987,
+        "pr_auc": null,
+        "roc_auc": null,
+        "brier": null,
+        "ece_10": null,
+        "ranking": null
+      },
+      "test_pr_auc_ci": null,
+      "recent": null,
+      "note": null,
+      "error": null
+    }
+  ],
+  "feature_importance": {
+    "E1_logistic_regression": [
+      {
+        "feature": "country",
+        "importance": 0.4988,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "language",
+        "importance": 0.25499,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "type",
+        "importance": 0.07488,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "sound_train_median_views_log",
+        "importance": 0.06186,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "sound_train_usage_log",
+        "importance": 0.02573,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "caption_len",
+        "importance": 0.01306,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "caption_words",
+        "importance": 0.01273,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "is_photo_carousel",
+        "importance": 0.01009,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "log_duration",
+        "importance": 0.00852,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "is_shop_video",
+        "importance": 0.00704,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "is_ad",
+        "importance": 0.00577,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "caption_has_mention",
+        "importance": 0.00417,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "caption_emoji_count",
+        "importance": 0.00347,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "has_branded_content",
+        "importance": 0.00322,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "posted_hour",
+        "importance": 0.00293,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "posted_dow",
+        "importance": 0.00234,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "not_recommended_for_fyp",
+        "importance": 0.00224,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "caption_exclaim_count",
+        "importance": 0.00195,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "duration_s",
+        "importance": 0.00149,
+        "method": "abs_coefficient"
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.0013,
+        "method": "abs_coefficient"
+      }
+    ],
+    "E2_random_forest": [
+      {
+        "feature": "sound_train_median_views_log",
+        "importance": 0.67079,
+        "method": "impurity"
+      },
+      {
+        "feature": "sound_train_usage_log",
+        "importance": 0.04641,
+        "method": "impurity"
+      },
+      {
+        "feature": "log_duration",
+        "importance": 0.03732,
+        "method": "impurity"
+      },
+      {
+        "feature": "duration_s",
+        "importance": 0.03319,
+        "method": "impurity"
+      },
+      {
+        "feature": "language",
+        "importance": 0.02887,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_len",
+        "importance": 0.02882,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_words",
+        "importance": 0.02847,
+        "method": "impurity"
+      },
+      {
+        "feature": "country",
+        "importance": 0.01685,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_upper_ratio",
+        "importance": 0.01561,
+        "method": "impurity"
+      },
+      {
+        "feature": "posted_hour",
+        "importance": 0.01459,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_emoji_count",
+        "importance": 0.00951,
+        "method": "impurity"
+      },
+      {
+        "feature": "is_photo_carousel",
+        "importance": 0.00941,
+        "method": "impurity"
+      },
+      {
+        "feature": "log_hashtag_count",
+        "importance": 0.00871,
+        "method": "impurity"
+      },
+      {
+        "feature": "hashtag_count",
+        "importance": 0.00865,
+        "method": "impurity"
+      },
+      {
+        "feature": "is_shop_video",
+        "importance": 0.00861,
+        "method": "impurity"
+      },
+      {
+        "feature": "posted_dow",
+        "importance": 0.00837,
+        "method": "impurity"
+      },
+      {
+        "feature": "type",
+        "importance": 0.00704,
+        "method": "impurity"
+      },
+      {
+        "feature": "is_ad",
+        "importance": 0.00441,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_has_mention",
+        "importance": 0.00411,
+        "method": "impurity"
+      },
+      {
+        "feature": "caption_exclaim_count",
+        "importance": 0.00294,
+        "method": "impurity"
+      }
+    ],
+    "E3_catboost": [
+      {
+        "feature": "sound_train_median_views_log",
+        "importance": 0.49161,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "sound_train_usage_log",
+        "importance": 0.30455,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "country",
+        "importance": 0.07265,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "log_duration",
+        "importance": 0.01902,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "posted_hour",
+        "importance": 0.01718,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "duration_s",
+        "importance": 0.0149,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_len",
+        "importance": 0.01352,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "posted_dow",
+        "importance": 0.01277,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_upper_ratio",
+        "importance": 0.01106,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "language",
+        "importance": 0.00818,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_words",
+        "importance": 0.00582,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "is_photo_carousel",
+        "importance": 0.00522,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_emoji_count",
+        "importance": 0.00459,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_has_mention",
+        "importance": 0.00341,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "is_shop_video",
+        "importance": 0.00313,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "hashtag_count",
+        "importance": 0.00284,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "caption_exclaim_count",
+        "importance": 0.00256,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "log_hashtag_count",
+        "importance": 0.00204,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "is_ad",
+        "importance": 0.00144,
+        "method": "catboost_prediction_value"
+      },
+      {
+        "feature": "is_ai_generated",
+        "importance": 0.00097,
+        "method": "catboost_prediction_value"
+      }
+    ],
+    "E4_lightgbm": [
+      {
+        "feature": "sound_train_median_views_log",
+        "importance": 0.66393,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "sound_train_usage_log",
+        "importance": 0.10484,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "duration_s",
+        "importance": 0.04736,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "country",
+        "importance": 0.04609,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_len",
+        "importance": 0.02013,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "language",
+        "importance": 0.01729,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "posted_hour",
+        "importance": 0.01624,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_upper_ratio",
+        "importance": 0.01275,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_words",
+        "importance": 0.01203,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "posted_dow",
+        "importance": 0.01005,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "is_photo_carousel",
+        "importance": 0.00979,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "log_duration",
+        "importance": 0.00842,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "hashtag_count",
+        "importance": 0.00651,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_emoji_count",
+        "importance": 0.00618,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "is_ad",
+        "importance": 0.00339,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "is_shop_video",
+        "importance": 0.00273,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_has_mention",
+        "importance": 0.00271,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "log_hashtag_count",
+        "importance": 0.0023,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_exclaim_count",
+        "importance": 0.00204,
+        "method": "lightgbm_gain"
+      },
+      {
+        "feature": "caption_question_count",
+        "importance": 0.00165,
+        "method": "lightgbm_gain"
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.13.12",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "viraliq_version": "1.0.0"
+  },
+  "protocol_note": "Thresholds and encoders are fitted on the training month. The test split is the second half of the following month."
+}

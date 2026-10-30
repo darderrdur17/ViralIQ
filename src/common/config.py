@@ -53,7 +53,13 @@ class Paths:
                 continue
             value = getattr(self, f.name)
             if isinstance(value, Path) and not value.suffix:
-                value.mkdir(parents=True, exist_ok=True)
+                try:
+                    value.mkdir(parents=True, exist_ok=True)
+                except OSError:
+                    # Serverless and container filesystems are often read-only. Creating
+                    # the data directories is a convenience for local runs, not a
+                    # requirement for importing the package.
+                    pass
 
 
 @dataclasses.dataclass(frozen=True)

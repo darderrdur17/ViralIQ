@@ -1,0 +1,255 @@
+{
+  "available": true,
+  "duration_buckets": [
+    {
+      "bucket": "0-8s",
+      "videos": "4986260",
+      "median_views": 378.0,
+      "p99_views": 168233.0
+    },
+    {
+      "bucket": "8-15s",
+      "videos": "19180601",
+      "median_views": 328.0,
+      "p99_views": 139898.0
+    },
+    {
+      "bucket": "15-30s",
+      "videos": "26883618",
+      "median_views": 320.0,
+      "p99_views": 140973.0
+    },
+    {
+      "bucket": "30-60s",
+      "videos": "16932079",
+      "median_views": 404.0,
+      "p99_views": 179536.0
+    },
+    {
+      "bucket": "1-3min",
+      "videos": "12558109",
+      "median_views": 762.0,
+      "p99_views": 359972.0
+    },
+    {
+      "bucket": "3min+",
+      "videos": "2835435",
+      "median_views": 869.0,
+      "p99_views": 347043.0
+    }
+  ],
+  "hour_utc": [
+    {
+      "hour": 0,
+      "videos": "4917726",
+      "median_views": 277.0
+    },
+    {
+      "hour": 1,
+      "videos": "5022904",
+      "median_views": 265.0
+    },
+    {
+      "hour": 2,
+      "videos": "4775041",
+      "median_views": 304.0
+    },
+    {
+      "hour": 3,
+      "videos": "4245481",
+      "median_views": 316.0
+    },
+    {
+      "hour": 4,
+      "videos": "3702071",
+      "median_views": 337.0
+    },
+    {
+      "hour": 5,
+      "videos": "3145423",
+      "median_views": 353.0
+    },
+    {
+      "hour": 6,
+      "videos": "2803012",
+      "median_views": 372.0
+    },
+    {
+      "hour": 7,
+      "videos": "2688970",
+      "median_views": 401.0
+    },
+    {
+      "hour": 8,
+      "videos": "2740039",
+      "median_views": 431.0
+    },
+    {
+      "hour": 9,
+      "videos": "2934886",
+      "median_views": 449.0
+    },
+    {
+      "hour": 10,
+      "videos": "3343157",
+      "median_views": 455.0
+    },
+    {
+      "hour": 11,
+      "videos": "3823043",
+      "median_views": 440.0
+    },
+    {
+      "hour": 12,
+      "videos": "4309146",
+      "median_views": 426.0
+    },
+    {
+      "hour": 13,
+      "videos": "4691082",
+      "median_views": 392.0
+    },
+    {
+      "hour": 14,
+      "videos": "4912241",
+      "median_views": 405.0
+    },
+    {
+      "hour": 15,
+      "videos": "5097343",
+      "median_views": 384.0
+    },
+    {
+      "hour": 16,
+      "videos": "5104208",
+      "median_views": 414.0
+    },
+    {
+      "hour": 17,
+      "videos": "4882051",
+      "median_views": 463.0
+    },
+    {
+      "hour": 18,
+      "videos": "4756689",
+      "median_views": 467.0
+    },
+    {
+      "hour": 19,
+      "videos": "4672201",
+      "median_views": 422.0
+    },
+    {
+      "hour": 20,
+      "videos": "4478999",
+      "median_views": 420.0
+    },
+    {
+      "hour": 21,
+      "videos": "4472491",
+      "median_views": 386.0
+    },
+    {
+      "hour": 22,
+      "videos": "4411731",
+      "median_views": 371.0
+    },
+    {
+      "hour": 23,
+      "videos": "4530096",
+      "median_views": 348.0
+    }
+  ],
+  "countries": [
+    {
+      "country": "US",
+      "videos": "55220925",
+      "median_views": 306.0,
+      "p99_views": 83029.0
+    },
+    {
+      "country": "ID",
+      "videos": "5086048",
+      "median_views": 235.0,
+      "p99_views": 188733.0
+    },
+    {
+      "country": "PH",
+      "videos": "3001859",
+      "median_views": 139.0,
+      "p99_views": 136271.0
+    },
+    {
+      "country": "VN",
+      "videos": "2012410",
+      "median_views": 355.0,
+      "p99_views": 304199.0
+    },
+    {
+      "country": "BR",
+      "videos": "2007201",
+      "median_views": 369.0,
+      "p99_views": 204787.0
+    },
+    {
+      "country": "PK",
+      "videos": "1790409",
+      "median_views": 409.0,
+      "p99_views": 203901.0
+    },
+    {
+      "country": "TH",
+      "videos": "1758692",
+      "median_views": 303.0,
+      "p99_views": 185346.0
+    },
+    {
+      "country": "NG",
+      "videos": "1687939",
+      "median_views": 178.0,
+      "p99_views": 113880.0
+    },
+    {
+      "country": "GB",
+      "videos": "1511947",
+      "median_views": 678.0,
+      "p99_views": 287224.0
+    },
+    {
+      "country": "MY",
+      "videos": "1154284",
+      "median_views": 258.0,
+      "p99_views": 122350.0
+    },
+    {
+      "country": "MX",
+      "videos": "1152318",
+      "median_views": 573.0,
+      "p99_views": 403762.0
+    },
+    {
+      "country": "FR",
+      "videos": "996839",
+      "median_views": 908.0,
+      "p99_views": 385658.0
+    },
+    {
+      "country": "SA",
+      "videos": "994134",
+      "median_views": 555.0,
+      "p99_views": 221003.0
+    },
+    {
+      "country": "DE",
+      "videos": "963831",
+      "median_views": 823.0,
+      "p99_views": 298760.0
+    },
+    {
+      "country": "MM",
+      "videos": "807399",
+      "median_views": 583.0,
+      "p99_views": 136054.0
+    }
+  ]
+}

@@ -486,7 +486,10 @@ function renderResult(r){
     <table><tbody>
       <tr><td>Model version</td><td class="num" style="font-size:11px">${esc(r.model?.version)}</td></tr>
       <tr><td>Label</td><td style="font-size:11px;text-align:right">${esc(r.label_definition)}</td></tr>
-      <tr><td>Prediction ID</td><td class="num" style="font-size:10px">${esc((r.prediction_id||'').slice(0,18))}</td></tr>
+      ${r.prediction_id
+        ? `<tr><td>Prediction ID</td><td class="num" style="font-size:10px">${esc(r.prediction_id.slice(0,18))}</td></tr>`
+        : `<tr><td>Persistence</td><td style="font-size:11px;text-align:right;color:var(--dim)">
+             not stored in this deployment</td></tr>`}
     </tbody></table>
     <ul style="font-size:11.5px;color:var(--dim);padding-left:16px;margin-top:10px">
       ${(r.limitations||[]).map(l => `<li>${esc(l)}</li>`).join('')}

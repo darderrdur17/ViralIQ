@@ -1,0 +1,35 @@
+{
+  "min_posted_at": "2026-09-01T00:00:00+00:00",
+  "max_posted_at": "2026-10-03T13:00:00+00:00",
+  "countries": 236,
+  "languages": 134,
+  "sounds": 1807944,
+  "median_views": 370.0,
+  "mean_views": 9883.0,
+  "p99_views": 176461.0,
+  "pct_zero_views": 0.89,
+  "available": true,
+  "rows": 2721291,
+  "estimated_population_rows": 100460031,
+  "sampling_is_uniform": false,
+  "sample_files": [
+    "r__2026-10.parquet",
+    "s__2026-09.parquet"
+  ],
+  "monthly": [
+    {
+      "month": "2026-09",
+      "videos": 987260,
+      "videos_estimated": 98726000,
+      "p99_views": 240927.0,
+      "median_views": 405.0
+    },
+    {
+      "month": "2026-10",
+      "videos": 1734031,
+      "videos_estimated": 1734031,
+      "p99_views": 150387.0,
+      "median_views": 347.0
+    }
+  ]
+}

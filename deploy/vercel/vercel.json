@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    { "src": "api/index.py", "use": "@vercel/python", "config": { "maxLambdaSize": "60mb" } },
+    { "src": "public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/v1/(.*)", "dest": "api/index.py" },
+    { "src": "/api/(.*)", "dest": "api/index.py" },
+    { "src": "/(.*)", "dest": "public/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}

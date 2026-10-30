@@ -1,0 +1,219 @@
+{
+  "available": true,
+  "window": {
+    "start": "2026-09-01T00:00:00+00:00",
+    "end": "2026-10-03T13:00:00+00:00",
+    "acceleration_note": "Acceleration compares the final 7 days of the observed window against all earlier days in that window. Counts are weighted by the inverse sampling fraction, so a 1%-sampled month and a fully-sampled month are comparable. These are historical observations, not a live trend feed. A tag marked 'emerging' had no meaningful prior usage inside the window, so no ratio is reported for it \u2014 a first appearance is not an acceleration. Sample files were built at different fractions; weights correct for this, but estimates from the sparsely sampled file carry more sampling error.",
+    "counts_are_weighted": true
+  },
+  "accelerating_hashtags": [
+    {
+      "hashtag": "reggie",
+      "uses": 3774,
+      "uses_last_7d": 3674,
+      "uses_prior": 100,
+      "acceleration": 36.74,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "wuwacreator",
+      "uses": 25036,
+      "uses_last_7d": 24236,
+      "uses_prior": 800,
+      "acceleration": 30.295,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "\u0628\u0627\u0628\u0627_\u0627\u0644\u0645\u062c\u0627\u0644\ud83c\udfce\ufe0f",
+      "uses": 2288,
+      "uses_last_7d": 2188,
+      "uses_prior": 100,
+      "acceleration": 21.88,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "\u9cf4\u6f6e",
+      "uses": 1304,
+      "uses_last_7d": 1204,
+      "uses_prior": 100,
+      "acceleration": 12.04,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "afcon",
+      "uses": 1019,
+      "uses_last_7d": 919,
+      "uses_prior": 100,
+      "acceleration": 9.19,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "wutheringwaves",
+      "uses": 28306,
+      "uses_last_7d": 25506,
+      "uses_prior": 2800,
+      "acceleration": 9.109,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "tiktokshopfalidealsforyou",
+      "uses": 1951,
+      "uses_last_7d": 1751,
+      "uses_prior": 200,
+      "acceleration": 8.755,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "vmas",
+      "uses": 4727,
+      "uses_last_7d": 4227,
+      "uses_prior": 500,
+      "acceleration": 8.454,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "cornell",
+      "uses": 2813,
+      "uses_last_7d": 2513,
+      "uses_prior": 300,
+      "acceleration": 8.377,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "\u0627\u0644\u0645\u0646\u062a\u062e\u0628_\u0627\u0644\u0639\u0631\u0627\u0642\u064a",
+      "uses": 918,
+      "uses_last_7d": 818,
+      "uses_prior": 100,
+      "acceleration": 8.18,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "timnas",
+      "uses": 911,
+      "uses_last_7d": 811,
+      "uses_prior": 100,
+      "acceleration": 8.11,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "cloverboys",
+      "uses": 846,
+      "uses_last_7d": 746,
+      "uses_prior": 100,
+      "acceleration": 7.46,
+      "pattern": "accelerating"
+    }
+  ],
+  "accelerating_sounds": [
+    {
+      "sound_id": 7685279849666054171,
+      "videos": 1731,
+      "videos_last_7d": 1631,
+      "videos_prior": 100,
+      "median_views": 271.0,
+      "acceleration": 16.31,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7685314610840389673,
+      "videos": 4179,
+      "videos_last_7d": 3879,
+      "videos_prior": 300,
+      "median_views": 178.0,
+      "acceleration": 12.93,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7689329466132908830,
+      "videos": 1343,
+      "videos_last_7d": 1243,
+      "videos_prior": 100,
+      "median_views": 542.0,
+      "acceleration": 12.43,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7683661222041914126,
+      "videos": 1240,
+      "videos_last_7d": 1140,
+      "videos_prior": 100,
+      "median_views": 321.0,
+      "acceleration": 11.4,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7687235587098740782,
+      "videos": 1236,
+      "videos_last_7d": 1136,
+      "videos_prior": 100,
+      "median_views": 126.0,
+      "acceleration": 11.36,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7682536640748849942,
+      "videos": 1137,
+      "videos_last_7d": 1037,
+      "videos_prior": 100,
+      "median_views": 211.0,
+      "acceleration": 10.37,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7688527795836341012,
+      "videos": 1042,
+      "videos_last_7d": 942,
+      "videos_prior": 100,
+      "median_views": 99.0,
+      "acceleration": 9.42,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7298564935615875842,
+      "videos": 1027,
+      "videos_last_7d": 927,
+      "videos_prior": 100,
+      "median_views": 230.0,
+      "acceleration": 9.27,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7684049277894560543,
+      "videos": 1016,
+      "videos_last_7d": 916,
+      "videos_prior": 100,
+      "median_views": 626.0,
+      "acceleration": 9.16,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7688224290399619858,
+      "videos": 975,
+      "videos_last_7d": 875,
+      "videos_prior": 100,
+      "median_views": 269.0,
+      "acceleration": 8.75,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7687248577822869555,
+      "videos": 1888,
+      "videos_last_7d": 1688,
+      "videos_prior": 200,
+      "median_views": 131.0,
+      "acceleration": 8.44,
+      "pattern": "accelerating"
+    },
+    {
+      "sound_id": 7467221484948966149,
+      "videos": 924,
+      "videos_last_7d": 824,
+      "videos_prior": 100,
+      "median_views": 158.0,
+      "acceleration": 8.24,
+      "pattern": "accelerating"
+    }
+  ],
+  "mode": "historical",
+  "caveat": "Ranked from historical observations of the ingested sample. These are not live TikTok Creative Center trends."
+}
