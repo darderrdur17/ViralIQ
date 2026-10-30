@@ -133,6 +133,8 @@ if _DASHBOARD.exists():
 
     app.mount("/app", StaticFiles(directory=str(_DASHBOARD), html=True), name="dashboard")
 
-    @app.get("/", include_in_schema=False)
+    # HEAD must work too: link checkers and uptime monitors probe with HEAD, and a
+    # redirect route registered for GET alone answers 405.
+    @app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
     def _root() -> RedirectResponse:
         return RedirectResponse(url="/app/")

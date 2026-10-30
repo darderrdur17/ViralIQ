@@ -194,6 +194,9 @@ median — which improved the champion's PR-AUC from 0.0265 to 0.0318.
 
 ## Quick start
 
+> The repository is **private** — you need access before the clone below will work.
+> Everything else in this section runs without any credentials.
+
 ```bash
 git clone https://github.com/darderrdur17/ViralIQ.git
 cd ViralIQ
@@ -299,7 +302,7 @@ api/                    FastAPI app · routes · schemas · DuckDB persistence
 dashboard/              single-page analytics UI (no build step)
 docs/                   architecture · methodology · data dictionary · model card · limitations
 reports/                generated audit · benchmark · executive summary
-tests/                  55 tests across labels, metrics, encoder, splits, importer, attribution, API, parity
+tests/                  61 tests across labels, metrics, encoder, splits, importer, attribution, API, parity
 deploy/vercel/          generated serverless project (portable model + pre-computed payloads)
 ```
 
@@ -308,7 +311,7 @@ deploy/vercel/          generated serverless project (portable model + pre-compu
 ## Verification
 
 ```bash
-python3 -m pytest tests/ -q              # 55 passed
+python3 -m pytest tests/ -q              # 61 passed
 python3 -m ruff check src api scripts tests   # clean
 ```
 
@@ -336,6 +339,8 @@ Beyond unit tests:
   the app reports this rather than presenting stale data as live.
 - **One forward holdout.** Drift is tested against a single month boundary, so drift conclusions
   are provisional.
+- **Single application process.** The DuckDB store holds an OS-level lock per file, so
+  `uvicorn --workers N` is not supported. Horizontal scaling needs PostgreSQL.
 
 Full list in [`docs/limitations.md`](docs/limitations.md); measured evidence in
 [`reports/research/dataset_audit.md`](reports/research/dataset_audit.md).

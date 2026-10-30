@@ -86,6 +86,27 @@ No TikTok Research API, Display API, Creative Center or commercial provider inte
 implemented or claimed. The supported path for new data is manual Parquet/CSV import, which
 updates the freshness record.
 
+## 11a. Persistence assumes a single application process
+
+The application database is an embedded DuckDB file. DuckDB holds an **OS-level lock per database
+file**, so:
+
+- Two processes cannot open it at once. `uvicorn --workers 4` will fail on the second worker.
+- A running server blocks the test suite unless the suite points elsewhere. Tests do exactly that
+  via `VIRALIQ_DB_PATH` (`tests/conftest.py`).
+- Concurrent writes within one process must share a connection. The store now holds a single
+  locked connection; opening one per request previously failed under load with
+  `Unique file handle conflict`.
+
+For horizontal scaling, replace the store with PostgreSQL — the schema is already
+Postgres-compatible. This is a deliberate MVP trade-off, not an oversight.
+
+## 11b. HEAD is not supported on API routes
+
+FastAPI's `APIRoute` does not add `HEAD` alongside `GET`, so `HEAD /api/v1/health` returns `405`.
+Uptime monitors that probe with `GET` are unaffected. The dashboard root (`/`) does accept `HEAD`,
+because link checkers use it there.
+
 ## 12. What would make this materially stronger
 
 In rough order of impact:

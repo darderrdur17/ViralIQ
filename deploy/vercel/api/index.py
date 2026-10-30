@@ -483,6 +483,6 @@ def observations(limit: int = 100) -> dict:
 if PUBLIC.exists():
     app.mount("/app", StaticFiles(directory=str(PUBLIC), html=True), name="dashboard")
 
-    @app.get("/")
+    @app.api_route("/", methods=["GET", "HEAD"])
     def root() -> FileResponse:
         return FileResponse(PUBLIC / "index.html")

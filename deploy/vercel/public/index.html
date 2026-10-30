@@ -501,7 +501,16 @@ async function loadHistory(){
   loading(el);
   try {
     const h = await api('/predictions/history?limit=8');
-    if (!h.items.length){ emptyState(el, 'No predictions stored', 'Submitted predictions will appear here.'); return; }
+    if (!h.items.length){
+      // A deployment without a store must say so; promising that predictions will
+      // appear later would be untrue there.
+      if (h.deployment_note){
+        emptyState(el, 'No history in this deployment', h.deployment_note);
+      } else {
+        emptyState(el, 'No predictions stored', 'Submitted predictions will appear here.');
+      }
+      return;
+    }
     el.innerHTML = `<table><thead><tr><th>When</th><th>Task</th><th class="num">Probability</th>
       <th>Tier</th><th>Model</th></tr></thead><tbody>
       ${h.items.map(i => `<tr>
