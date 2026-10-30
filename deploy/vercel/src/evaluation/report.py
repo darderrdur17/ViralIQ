@@ -357,6 +357,8 @@ def render_model_card(run: dict) -> str:
 def _champion(run: dict) -> str | None:
     scored = []
     for name, entry in run["metrics"].items():
+        if name.startswith("E0"):
+            continue  # baselines and heuristics are never the champion
         pr = (entry.get("test") or {}).get("pr_auc")
         if pr is not None:
             scored.append((pr, name))

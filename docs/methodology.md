@@ -93,19 +93,34 @@ replacing them.
 
 | ID | Model | Role |
 |---|---|---|
-| E0a | Random ranking | Floor; any model must beat this |
-| E0b | Train-prevalence constant | PR-AUC degenerates to prevalence |
+| E0_random_ranking | Random scores | Floor; any model must beat this |
+| E0_majority_prevalence | Constant at train prevalence | PR-AUC degenerates to prevalence |
+| E0b_sound_popularity | Score = sound's training-window median views | The heuristic that matters |
+| E0c_duration_only | Score = −log(duration) | Weak-signal sanity check |
 | E1 | Logistic regression (one-hot, balanced) | Linear baseline |
 | E2 | Random forest (one-hot, balanced) | Nonlinear baseline |
 | E3 | CatBoost (native categorical, balanced) | Primary candidate |
 | E4 | LightGBM (native categorical, balanced) | Comparative gradient booster |
 
-Class imbalance is handled with balanced class weights rather than resampling, which keeps the
-calibration step meaningful. Probabilities are calibrated with isotonic regression fitted on the
-validation slice.
+### Why a heuristic baseline, not just random
 
-CatBoost is treated as a **candidate**, not a presumed winner. The champion is whichever model
-achieves the best test PR-AUC.
+Beating random is not evidence of much. Since sound features dominate the tree importances, the
+question a reader actually asks is *"does this beat just using the sound's historical popularity?"*
+`E0b_sound_popularity` answers it directly, on the same rows and with the same metrics. It is the
+baseline the model has to clear to justify its complexity.
+
+`E0*` entries are **never eligible to be champion** — they exist to be beaten. Both
+`select_champion` and the report renderer skip them, and `tests/test_champion_selection.py` pins
+that behaviour, because a heuristic that outscored the models would otherwise have been shipped.
+
+Class imbalance is handled with balanced class weights rather than resampling, which keeps the
+calibration step meaningful. Probabilities are calibrated with **Platt scaling** (sigmoid) fitted on
+the validation slice. Isotonic regression was tried first and rejected: on a ~1.4% base rate it fits
+a step function whose plateaus map wide score ranges to one probability, so distinct videos received
+identical scores.
+
+CatBoost is treated as a **candidate**, not a presumed winner. The champion is whichever eligible
+model achieves the best test PR-AUC.
 
 ## 7. Metrics
 

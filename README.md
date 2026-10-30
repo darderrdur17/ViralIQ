@@ -142,7 +142,7 @@ API, the dashboard, and the reports. Full evidence in
 
 ## Measured results
 
-Run `20261030T103039_primary_ef7c86`. **Train** = 2026-09 (300,000 rows). **Test** = 2026-10
+Run `20261030T122402_primary_75992a`. **Train** = 2026-09 (300,000 rows). **Test** = 2026-10
 (199,998 rows), a later month never seen during fitting, calibration, or threshold selection.
 
 | Model | PR-AUC | 95% CI | ROC-AUC | Precision@1000 | Lift@1000 | Brier |
@@ -151,10 +151,19 @@ Run `20261030T103039_primary_ef7c86`. **Train** = 2026-09 (300,000 rows). **Test
 | E3 CatBoost | 0.0250 | 0.0230–0.0279 | 0.686 | **3.70%** | **2.65×** | 0.0138 |
 | E4 LightGBM | 0.0241 | 0.0225–0.0265 | 0.667 | 3.40% | 2.43× | 0.0138 |
 | E2 Random forest | 0.0232 | 0.0218–0.0258 | 0.655 | 2.70% | 1.93× | 0.0138 |
-| E0 Random ranking | 0.0146 | — | 0.516 | 1.20% | 0.86× | 0.3335 |
+| E0b *heuristic:* sound popularity | 0.0152 | — | 0.514 | 1.30% | 0.93× | — |
+| E0 *baseline:* random ranking | 0.0146 | — | 0.516 | 1.20% | 0.86× | 0.3335 |
+| E0c *heuristic:* duration only | 0.0111 | — | 0.419 | 0.60% | 0.43× | — |
+
+Beating random proves little, so the benchmark includes the heuristic a sceptical reader would
+propose first: **rank every video by its sound's historical popularity**. Since sound features
+dominate the tree importances, that is the baseline that matters — and the champion clears it by
+**2.09×** (0.0318 vs 0.0152), lifting ROC-AUC from 0.514 to 0.742.
 
 Base rate **1.40%**. Intervals are 95% percentile bootstrap clustered by `sound_id`, because
-videos sharing a sound are not independent observations.
+videos sharing a sound are not independent observations. `E0*` rows are baselines and heuristics:
+scored on identical rows, and never eligible to be champion — a heuristic that outscored the models
+would otherwise have been shipped, so `tests/test_champion_selection.py` pins that rule.
 
 **How to read this honestly**
 
@@ -226,7 +235,7 @@ Cohorts under 200 videos fall back to the global p99 (258,801 views in this run)
 
 ---
 
-## Five things worth knowing
+## Six things worth knowing
 
 **1. A linear model beat three gradient boosters.** CatBoost was the expected primary candidate.
 On metadata-only features it scored 0.0250 against logistic regression's 0.0318. Extra capacity
@@ -245,7 +254,15 @@ videos returned *identical* numbers. Platt scaling is strictly monotonic and fix
 made raw counts incomparable: hashtags appeared to accelerate 1,595×. That was the sampling
 difference, not growth. Counts are now weighted by inverse sampling probability.
 
-**5. A missing sound is not an obscure sound.** Treating an absent `sound_id` as `0` usage told the
+**5. The observation clock bounds how far back training can reach.** Adding 2026-08 as a third
+month should have enabled the forward holdout. Instead it broke the label: August's median
+observation age is **756 h** against a 720 h validity window, so **53%** of it is discarded, and the
+survivors are a biased subsample. The fitted p99 collapsed from 258,801 to 58,526 views and test
+prevalence inflated from 1.4% to 4.3% — CatBoost ended up scoring *below* random. The holdout path
+works; the data cannot populate it. Full write-up in
+[`reports/research/three_month_drift_experiment.md`](reports/research/three_month_drift_experiment.md).
+
+**6. A missing sound is not an obscure sound.** Treating an absent `sound_id` as `0` usage told the
 model "extremely obscure sound", inflating scores. It is now `NULL` and imputed with the training
 median — which improved the champion's PR-AUC from 0.0265 to 0.0318.
 
@@ -260,7 +277,25 @@ median — which improved the champion's PR-AUC from 0.0265 to 0.0318.
 git clone https://github.com/darderrdur17/ViralIQ.git
 cd ViralIQ
 python3 -m pip install -r requirements.txt
+```
 
+### Try it in 30 seconds
+
+No download, no credentials. A committed 20,000-row fixture seeds a working dataset and model:
+
+```bash
+python scripts/seed_demo.py          # ~12s
+uvicorn api.main:app --port 8000
+# open http://localhost:8000/app/
+```
+
+The fixture is **real data**, not synthetic — see [`data/fixtures/README.md`](data/fixtures/README.md)
+for provenance. Numbers from it are *not* the figures quoted above; those come from a 300,000-row
+training window across three months.
+
+### Full pipeline
+
+```bash
 # 1. Audit the source (remote DuckDB queries; nothing 460 GB is downloaded)
 python3 scripts/audit.py --tail 2
 #    → reports/research/dataset_audit.md
@@ -279,6 +314,12 @@ python3 scripts/train.py --max-rows 300000
 uvicorn api.main:app --port 8000
 #    Dashboard  http://localhost:8000/app/
 #    API docs   http://localhost:8000/docs
+```
+
+Optional analyses:
+
+```bash
+python scripts/threshold_sweep.py    # how sensitive is the result to the "top 1%" line?
 ```
 
 No credentials required. `scripts/train.py` defaults to `--max-rows 300000` to bound memory on a
@@ -468,6 +509,7 @@ Details in [`deploy/vercel/README.md`](deploy/vercel/README.md).
 - [Architecture](docs/architecture.md) · [Methodology](docs/methodology.md) · [Evaluation protocol](docs/evaluation_protocol.md)
 - [Data dictionary](docs/data_dictionary.md) · [Data sources](docs/data_sources.md) · [Model card](docs/model_card.md)
 - [Dataset audit](reports/research/dataset_audit.md) · [Can we predict the next trend?](reports/research/trend_forecast_feasibility.md)
+- [Three-month drift experiment](reports/research/three_month_drift_experiment.md) · [Threshold sweep](reports/evaluation/threshold_sweep.md)
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "available": true,
   "window": {
-    "start": "2026-09-01T00:00:00+00:00",
+    "start": "2026-08-01T00:00:00+00:00",
     "end": "2026-10-03T13:00:00+00:00",
     "acceleration_note": "Acceleration compares the final 7 days of the observed window against all earlier days in that window. Counts are weighted by the inverse sampling fraction, so a 1%-sampled month and a fully-sampled month are comparable. These are historical observations, not a live trend feed. A tag marked 'emerging' had no meaningful prior usage inside the window, so no ratio is reported for it \u2014 a first appearance is not an acceleration. Sample files were built at different fractions; weights correct for this, but estimates from the sparsely sampled file carry more sampling error.",
     "counts_are_weighted": true
@@ -11,51 +11,35 @@
   "forecast_note": "This is detection, not prediction: it ranks hashtags and sounds that were already accelerating as of the last day of data. That day is 27 days behind today, and a typical hashtag here rises and peaks within 7\u201311 days \u2014 so trends shown have usually already peaked. Forecasting the next trend needs repeated observations, not this snapshot corpus.",
   "accelerating_hashtags": [
     {
-      "hashtag": "reggie",
-      "uses": 3774,
-      "uses_last_7d": 3674,
-      "uses_prior": 100,
-      "acceleration": 36.74,
-      "pattern": "accelerating"
-    },
-    {
-      "hashtag": "wuwacreator",
-      "uses": 25036,
-      "uses_last_7d": 24236,
-      "uses_prior": 800,
-      "acceleration": 30.295,
+      "hashtag": "cornelluniversity",
+      "uses": 2925,
+      "uses_last_7d": 2725,
+      "uses_prior": 200,
+      "acceleration": 13.625,
       "pattern": "accelerating"
     },
     {
       "hashtag": "\u0628\u0627\u0628\u0627_\u0627\u0644\u0645\u062c\u0627\u0644\ud83c\udfce\ufe0f",
-      "uses": 2288,
+      "uses": 2388,
       "uses_last_7d": 2188,
-      "uses_prior": 100,
-      "acceleration": 21.88,
+      "uses_prior": 200,
+      "acceleration": 10.94,
       "pattern": "accelerating"
     },
     {
-      "hashtag": "\u9cf4\u6f6e",
-      "uses": 1304,
-      "uses_last_7d": 1204,
+      "hashtag": "abelito",
+      "uses": 1133,
+      "uses_last_7d": 1033,
       "uses_prior": 100,
-      "acceleration": 12.04,
+      "acceleration": 10.33,
       "pattern": "accelerating"
     },
     {
-      "hashtag": "afcon",
-      "uses": 1019,
-      "uses_last_7d": 919,
-      "uses_prior": 100,
-      "acceleration": 9.19,
-      "pattern": "accelerating"
-    },
-    {
-      "hashtag": "wutheringwaves",
-      "uses": 28306,
-      "uses_last_7d": 25506,
-      "uses_prior": 2800,
-      "acceleration": 9.109,
+      "hashtag": "reggie",
+      "uses": 4074,
+      "uses_last_7d": 3674,
+      "uses_prior": 400,
+      "acceleration": 9.185,
       "pattern": "accelerating"
     },
     {
@@ -67,14 +51,6 @@
       "pattern": "accelerating"
     },
     {
-      "hashtag": "vmas",
-      "uses": 4727,
-      "uses_last_7d": 4227,
-      "uses_prior": 500,
-      "acceleration": 8.454,
-      "pattern": "accelerating"
-    },
-    {
       "hashtag": "cornell",
       "uses": 2813,
       "uses_last_7d": 2513,
@@ -83,31 +59,64 @@
       "pattern": "accelerating"
     },
     {
-      "hashtag": "\u0627\u0644\u0645\u0646\u062a\u062e\u0628_\u0627\u0644\u0639\u0631\u0627\u0642\u064a",
-      "uses": 918,
-      "uses_last_7d": 818,
-      "uses_prior": 100,
-      "acceleration": 8.18,
+      "hashtag": "upgradeszn",
+      "uses": 1673,
+      "uses_last_7d": 1473,
+      "uses_prior": 200,
+      "acceleration": 7.365,
       "pattern": "accelerating"
     },
     {
-      "hashtag": "timnas",
-      "uses": 911,
-      "uses_last_7d": 811,
+      "hashtag": "shopwithconfidence",
+      "uses": 750,
+      "uses_last_7d": 650,
       "uses_prior": 100,
-      "acceleration": 8.11,
+      "acceleration": 6.5,
       "pattern": "accelerating"
     },
     {
-      "hashtag": "cloverboys",
-      "uses": 846,
-      "uses_last_7d": 746,
+      "hashtag": "myrideishere",
+      "uses": 723,
+      "uses_last_7d": 623,
       "uses_prior": 100,
-      "acceleration": 7.46,
+      "acceleration": 6.23,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "\u0e01\u0e23\u0e38\u0e07\u0e40\u0e17\u0e1e\u0e19\u0e49\u0e4d\u0e32\u0e17\u0e48\u0e27\u0e21\u0e41\u0e25\u0e49\u0e27",
+      "uses": 714,
+      "uses_last_7d": 614,
+      "uses_prior": 100,
+      "acceleration": 6.14,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "tamayosfabricadeoro",
+      "uses": 714,
+      "uses_last_7d": 614,
+      "uses_prior": 100,
+      "acceleration": 6.14,
+      "pattern": "accelerating"
+    },
+    {
+      "hashtag": "allthingsgo",
+      "uses": 712,
+      "uses_last_7d": 612,
+      "uses_prior": 100,
+      "acceleration": 6.12,
       "pattern": "accelerating"
     }
   ],
   "accelerating_sounds": [
+    {
+      "sound_id": 7299944025344756486,
+      "videos": 2158,
+      "videos_last_7d": 2058,
+      "videos_prior": 100,
+      "median_views": 443.0,
+      "acceleration": 20.58,
+      "pattern": "accelerating"
+    },
     {
       "sound_id": 7685279849666054171,
       "videos": 1731,
@@ -205,15 +214,6 @@
       "videos_prior": 200,
       "median_views": 131.0,
       "acceleration": 8.44,
-      "pattern": "accelerating"
-    },
-    {
-      "sound_id": 7467221484948966149,
-      "videos": 924,
-      "videos_last_7d": 824,
-      "videos_prior": 100,
-      "median_views": 158.0,
-      "acceleration": 8.24,
       "pattern": "accelerating"
     }
   ],

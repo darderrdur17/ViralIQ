@@ -69,8 +69,12 @@ are not independent draws.
 ## 5. Comparison rules
 
 - All models in a run are scored on **identical rows** of the same split.
-- Baselines are mandatory: random ranking and a train-prevalence constant. A model that does not
-  beat random ranking has no demonstrated skill, regardless of its PR-AUC magnitude.
+- Baselines are mandatory: random ranking, a train-prevalence constant, and two single-feature
+  heuristics (`E0b_sound_popularity`, `E0c_duration_only`). Beating random proves little; beating
+  the sound-popularity heuristic is the claim that matters, because sound features dominate tree
+  importance.
+- **`E0*` entries are never eligible to be champion.** They exist to be beaten. `select_champion`
+  and the report renderer both skip them, pinned by `tests/test_champion_selection.py`.
 - The champion is selected by test PR-AUC. Ties break on the best Precision@K.
 - A model is never promoted on training or validation performance.
 

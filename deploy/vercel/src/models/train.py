@@ -274,6 +274,7 @@ class TrainingRun:
     sample_files: list[str]
     metrics: dict[str, dict]
     label_diagnostics: dict[str, Any]
+    label_quality: dict[str, Any]
     thresholds: dict[str, Any]
     splits: dict[str, dict]
     feature_importance: dict[str, list[dict]]
@@ -325,6 +326,31 @@ def run_training(
     labeled = {k: L.apply_labels(v, thresholds) for k, v in splits.items() if v.height}
     diag = {k: L.label_diagnostics(v) for k, v in labeled.items()}
     log.info("label diagnostics (train): %s", json.dumps(diag["train"]))
+
+    # A training month whose observation ages fall outside the validity window is
+    # silently reduced to a biased subsample, which drags the fitted threshold with it.
+    # This happened with 2026-08 (median observation age 756h against a 720h window):
+    # 53% of rows dropped and the global threshold collapsed from 258,801 to 58,526,
+    # inflating test prevalence to 4.3%. Warn loudly rather than train quietly on it.
+    excluded_pct = float(diag.get("train", {}).get("pct_excluded_invalid_clock") or 0.0)
+    label_quality = {
+        "pct_excluded_invalid_clock": excluded_pct,
+        "degraded": excluded_pct > 25.0,
+        "threshold_pct": 25.0,
+        "reason": (
+            "Training split loses more than a quarter of its rows to the observation "
+            "clock, so the survivors are a biased subsample and the fitted threshold "
+            "may not transfer to later months."
+            if excluded_pct > 25.0
+            else "Training split is within the observation-clock validity window."
+        ),
+    }
+    if label_quality["degraded"]:
+        log.warning(
+            "LABEL QUALITY: %.1f%% of the training split was dropped on the observation "
+            "clock. Treat the fitted threshold and the resulting metrics as unreliable.",
+            excluded_pct,
+        )
 
     # Features — sound stats frozen on the training window only.
     sound_stats = fit_sound_stats(train)
@@ -397,6 +423,33 @@ def run_training(
         },
         "train_prevalence": round(prev, 6),
     }
+
+    # ---- heuristic baselines ---------------------------------------------
+    # Random ranking is a weak floor, and a reviewer's real question is whether the
+    # model beats an obvious rule of thumb. Since sound features dominate the tree
+    # importances, "just use the sound's historical popularity" is the baseline that
+    # matters. Scored on exactly the same rows as the models.
+    heuristic_specs = {
+        "E0b_sound_popularity": ("sound_train_median_views_log", 1.0),
+        "E0c_duration_only": ("log_duration", -1.0),
+    }
+    for name, (column, sign) in heuristic_specs.items():
+        entry: dict[str, Any] = {
+            "note": f"Single-feature heuristic: {'-' if sign < 0 else ''}{column}.",
+        }
+        for split in ("test", "recent"):
+            if split not in featured or not len(y.get(split, [])):
+                continue
+            mask = valid_masks[split]
+            raw = (
+                featured[split][column]
+                .cast(pl.Float64, strict=False)
+                .fill_null(0.0)
+                .to_numpy()
+            )
+            entry[split] = M.evaluate(y[split][mask], raw[mask] * sign, k_values)
+        results[name] = entry
+        log.info("heuristic baseline %s scored", name)
 
     # ---- supervised models ------------------------------------------------
     for name, est in estimators.items():
@@ -495,6 +548,7 @@ def run_training(
         sample_files=[p.name for p in sample_paths],
         metrics=results,
         label_diagnostics=diag,
+        label_quality=label_quality,
         thresholds=thresholds.as_dict(),
         splits=split_meta,
         feature_importance=importance,
@@ -532,6 +586,9 @@ def select_champion(results: dict[str, dict]) -> str | None:
     """Pick the best model by test PR-AUC, then Precision@K."""
     scored = []
     for name, entry in results.items():
+        # E0* are baselines and heuristics; they exist to be beaten, never selected.
+        if name.startswith("E0"):
+            continue
         test = entry.get("test") or {}
         pr_auc = test.get("pr_auc")
         if pr_auc is None:

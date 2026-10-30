@@ -1,8 +1,8 @@
 # Model Benchmark
 
-Run: `20261030T103039_primary_ef7c86`  
-Trained: 2026-10-30T10:34:12.868590+00:00  
-Wall time: 219.2 s  
+Run: `20261030T122402_primary_75992a`  
+Trained: 2026-10-30T12:26:44.023893+00:00  
+Wall time: 165.3 s  
 Samples: r__2026-10.parquet, s__2026-09.parquet
 
 ## Splits
@@ -26,7 +26,9 @@ Ranking metrics at K = 1000. Prevalence shown so Precision@K can be read against
 | E3_catboost | 0.0250 | 0.023–0.028 | 0.6858 | 3.70% | 2.65× | 0.0138 | 0.0082 |
 | E4_lightgbm | 0.0241 | 0.022–0.027 | 0.6667 | 3.40% | 2.43× | 0.0138 | 0.0076 |
 | E2_random_forest | 0.0232 | 0.022–0.026 | 0.6550 | 2.70% | 1.93× | 0.0138 | 0.0056 |
+| E0b_sound_popularity | 0.0152 | — | 0.5136 | 2.20% | 1.57× | 0.1381 | 0.8137 |
 | E0_random_ranking | 0.0146 | — | 0.5162 | 1.20% | 0.86× | 0.3335 | 0.4867 |
+| E0c_duration_only | 0.0111 | — | 0.4193 | 0.60% | 0.43× | 0.0140 | 3.1486 |
 | E0_majority_prevalence | — | — | — | — | — | — | — |
 
 Test-set prevalence: 1.399%

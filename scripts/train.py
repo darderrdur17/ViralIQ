@@ -26,6 +26,13 @@ def main() -> int:
     parser.add_argument("--tag", default="primary")
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument(
+        "--months",
+        nargs="*",
+        default=None,
+        help="Restrict training to these YYYY-MM partitions, "
+             "e.g. --months 2026-09 2026-10",
+    )
+    parser.add_argument(
         "--max-rows",
         type=int,
         default=300_000,
@@ -35,12 +42,21 @@ def main() -> int:
     args = parser.parse_args()
 
     samples = sorted(SETTINGS.paths.data_samples.glob("*.parquet"))
+    if args.months:
+        # Sample files are one-per-month, so a name match is enough to scope the split.
+        samples = [p for p in samples if any(m in p.name for m in args.months)]
+        log.info("restricted to months %s -> %s", args.months, [p.name for p in samples])
     if not samples:
         log.error("No sample data. Run scripts/build_sample.py first.")
         return 1
     log.info("samples: %s", [p.name for p in samples])
 
-    run = run_training(output_tag=args.tag, seed=args.seed, max_rows_per_split=args.max_rows)
+    run = run_training(
+        sample_paths=samples,
+        output_tag=args.tag,
+        seed=args.seed,
+        max_rows_per_split=args.max_rows,
+    )
     run_path = SETTINGS.paths.model_registry / run.run_id / "run.json"
     reports = write_reports(run_path)
 

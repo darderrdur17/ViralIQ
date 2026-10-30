@@ -18,7 +18,7 @@
 <style>
   :root{
     --bg:#0b0f14; --panel:#121821; --panel-2:#0f151d; --line:#1e2836;
-    --text:#e6edf5; --muted:#8b9bb0; --dim:#5d6b7d;
+    --text:#e6edf5; --muted:#8b9bb0; --dim:#74839a;
     --accent:#4cc2ff; --accent-2:#7c5cff; --good:#3ddc97; --warn:#ffb454; --bad:#ff5c7a;
     --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
   }
@@ -89,7 +89,10 @@
   label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:5px;font-weight:550}
   input,select,textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);
     color:var(--text);padding:8px 10px;border-radius:8px;font-family:inherit;font-size:13px}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  /* Keyboard focus must be unmistakable, not just a border tint. */
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   button.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04070b;
     border:none;padding:10px 18px;border-radius:9px;font-weight:700;font-size:13px;
@@ -142,20 +145,20 @@
       </div>
     </div>
     <div class="spacer"></div>
-    <span id="modeBadge" class="badge"><span class="dot"></span><span>checking…</span></span>
-    <span id="modelBadge" class="badge"><span class="dot"></span><span>model…</span></span>
+    <span id="modeBadge" class="badge" role="status" aria-live="polite"><span class="dot"></span><span>checking…</span></span>
+    <span id="modelBadge" class="badge" role="status" aria-live="polite"><span class="dot"></span><span>model…</span></span>
   </header>
 
-  <nav>
-    <button data-tab="overview" class="active">Overview</button>
-    <button data-tab="predict">Prediction Studio</button>
-    <button data-tab="trends">Trend Intelligence</button>
-    <button data-tab="models">Model Laboratory</button>
-    <button data-tab="data">Data Operations</button>
+  <nav aria-label="Dashboard sections" role="tablist">
+    <button data-tab="overview" role="tab" aria-selected="true" aria-controls="tab-overview" class="active">Overview</button>
+    <button data-tab="predict" role="tab" aria-selected="false" aria-controls="tab-predict">Prediction Studio</button>
+    <button data-tab="trends" role="tab" aria-selected="false" aria-controls="tab-trends">Trend Intelligence</button>
+    <button data-tab="models" role="tab" aria-selected="false" aria-controls="tab-models">Model Laboratory</button>
+    <button data-tab="data" role="tab" aria-selected="false" aria-controls="tab-data">Data Operations</button>
   </nav>
 
   <!-- OVERVIEW -->
-  <section id="tab-overview">
+  <section id="tab-overview" role="tabpanel" aria-label="overview">
     <div class="grid g4" id="kpis" style="margin-bottom:14px"></div>
     <div class="grid g2">
       <div class="card"><h3>Monthly coverage</h3><div id="monthly"></div></div>
@@ -168,7 +171,7 @@
   </section>
 
   <!-- PREDICT -->
-  <section id="tab-predict" class="hide">
+  <section id="tab-predict" class="hide" role="tabpanel" aria-label="predict">
     <div class="grid g2">
       <div class="card">
         <h3>Pre-publication prediction</h3>
@@ -176,24 +179,24 @@
           Only metadata that exists <em>before</em> publication is accepted. Engagement counters
           are not part of this form because they are not knowable at prediction time.
         </p>
-        <div class="field"><label>Caption</label>
+        <div class="field"><label for="p_caption">Caption</label>
           <textarea id="p_caption" rows="3" placeholder="e.g. three ingredient pasta hack">three ingredient pasta hack nobody talks about</textarea></div>
         <div class="row">
-          <div class="field"><label>Hashtags (comma separated)</label>
+          <div class="field"><label for="p_hashtags">Hashtags (comma separated)</label>
             <input id="p_hashtags" value="foodtok,recipe" /></div>
-          <div class="field"><label>Duration (seconds)</label>
+          <div class="field"><label for="p_duration">Duration (seconds)</label>
             <input id="p_duration" type="number" value="21" min="1" /></div>
         </div>
         <div class="row">
-          <div class="field"><label>Country</label>
+          <div class="field"><label for="p_country">Country</label>
             <input id="p_country" value="US" /></div>
-          <div class="field"><label>Language</label>
+          <div class="field"><label for="p_language">Language</label>
             <input id="p_language" value="en" /></div>
         </div>
         <div class="row">
-          <div class="field"><label>Format</label>
+          <div class="field"><label for="p_type">Format</label>
             <select id="p_type"><option value="video">video</option><option value="photo">photo</option></select></div>
-          <div class="field"><label>Sound ID (optional)</label>
+          <div class="field"><label for="p_sound">Sound ID (optional)</label>
             <input id="p_sound" type="number" placeholder="leave blank" /></div>
         </div>
         <button class="primary" id="predictBtn">Predict virality</button>
@@ -214,7 +217,7 @@
   </section>
 
   <!-- TRENDS -->
-  <section id="tab-trends" class="hide">
+  <section id="tab-trends" class="hide" role="tabpanel" aria-label="trends">
     <div class="card" style="margin-bottom:14px">
       <h3>Observation window — detection, not prediction</h3>
       <div id="trendWindow" class="state">loading…</div>
@@ -226,7 +229,7 @@
   </section>
 
   <!-- MODELS -->
-  <section id="tab-models" class="hide">
+  <section id="tab-models" class="hide" role="tabpanel" aria-label="models">
     <div class="card" style="margin-bottom:14px">
       <h3>Model comparison — identical test split</h3>
       <div id="modelTable"></div>
@@ -238,7 +241,7 @@
   </section>
 
   <!-- DATA -->
-  <section id="tab-data" class="hide">
+  <section id="tab-data" class="hide" role="tabpanel" aria-label="data">
     <div class="grid g2" style="margin-bottom:14px">
       <div class="card"><h3>Freshness</h3><div id="freshness"></div></div>
       <div class="card"><h3>Data quality</h3><div id="quality"></div></div>
@@ -318,8 +321,11 @@ const TABS = ['overview','predict','trends','models','data'];
 
 function activateTab(name){
   if (!TABS.includes(name)) name = 'overview';
-  document.querySelectorAll('nav button').forEach(b =>
-    b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('nav button').forEach(b => {
+    const on = b.dataset.tab === name;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
   TABS.forEach(t => $('tab-'+t).classList.toggle('hide', t !== name));
   if (name === 'trends' && !window._trendsLoaded) loadTrends();
   if (name === 'models' && !window._modelsLoaded) loadModels();

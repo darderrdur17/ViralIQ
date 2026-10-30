@@ -1,22 +1,30 @@
 {
-  "min_posted_at": "2026-09-01T00:00:00+00:00",
+  "min_posted_at": "2026-08-01T00:00:00+00:00",
   "max_posted_at": "2026-10-03T13:00:00+00:00",
-  "countries": 236,
+  "countries": 245,
   "languages": 134,
-  "sounds": 1807944,
-  "median_views": 370.0,
-  "mean_views": 9883.0,
-  "p99_views": 176461.0,
-  "pct_zero_views": 0.89,
+  "sounds": 2421259,
+  "median_views": 376.0,
+  "mean_views": 10295.0,
+  "p99_views": 175116.0,
+  "pct_zero_views": 0.79,
   "available": true,
-  "rows": 2721291,
-  "estimated_population_rows": 100460031,
+  "rows": 3839883,
+  "estimated_population_rows": 212319231,
   "sampling_is_uniform": false,
   "sample_files": [
+    "a__2026-08.parquet",
     "r__2026-10.parquet",
     "s__2026-09.parquet"
   ],
   "monthly": [
+    {
+      "month": "2026-08",
+      "videos": 1118592,
+      "videos_estimated": 111859200,
+      "p99_views": 170613.0,
+      "median_views": 386.0
+    },
     {
       "month": "2026-09",
       "videos": 987260,
